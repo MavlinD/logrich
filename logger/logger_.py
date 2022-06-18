@@ -129,7 +129,7 @@ class MySynk:
                     # вероятно это строка
                     ...
                 except NameError as err:
-                    pprint(err)
+                    # pprint(err)
                     # когда сериализатор пытается найти переменную
                     ...
                 finally:
@@ -164,8 +164,44 @@ logger.add(
     filter=lambda record: record["extra"].get("name") == "all",
 )
 
+
+class ExcSynk:
+    max_len = config.MAX_WITH_LOG_OF_OBJ
+    compilied_message = None
+    is_printed_compile_message = False
+    is_compile_error = None
+
+    def __init__(self, exception):
+        # def __init__(self, log_entry: _handler.Message):
+        # def __init__(self, *arg, **kwargs):
+        """печатает запись лога"""
+        # self.log_entry = log_entry
+
+        # https://rich.readthedocs.io/en/stable/_modules/rich/highlighter.html
+        # https://rich.readthedocs.io/en/stable/highlighting.html
+        # https://loguru.readthedocs.io/en/stable/resources/recipes.html#serializing-log-messages-using-a-custom-function
+
+        # self.level = self.log_entry.record["level"].name.lower()
+        # self.obj = self.log_entry.record.get("extra").get("o")
+        # print_rule = self.log_entry.record.get("extra").get("rule")
+        # self._message = self.log_entry.record["message"]
+        # return sys.stdout
+        # print(repr(arg))
+        print(exception)
+        # print(repr(kwargs))
+        # sys.stdout.write(*arg)
+        ...
+        # self.restore_message()
+        # self.print_log_header()
+        # self.print_compiled_message()
+        # self.print_obj()
+        # if print_rule:
+        #     console.rule(style="#33adff")
+
+
 # только для исключений
 logger.add(
+    # ExcSynk,
     sys.stdout,
     filter=lambda record: record["extra"].get("name") == "err",
     format=config.LOGURU_EXCEPTION_FORMAT,
@@ -173,6 +209,6 @@ logger.add(
     catch=False,
 )
 
-errlog = logger.bind(name="err")
+errlog = logger.bind(name="err")  # .opt(colors=True)
 
 log = logger.bind(name="all")
