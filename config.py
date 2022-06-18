@@ -3,7 +3,7 @@ from pydantic import BaseSettings
 
 BASE_DIR = os.path.dirname(__file__)
 
-DOTENV_FILE = "./../.env"
+DOTENV_FILE = "./.env"
 
 
 class Settings(BaseSettings):

@@ -6,7 +6,7 @@ authors = ["Dmitry Mavlin <mavlind@list.ru>"]
 license = "GPL"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 toml = "0.10.2"
 watchdog = "2.0.3"
 loguru = "^0.6.0"
