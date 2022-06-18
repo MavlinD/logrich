@@ -6,18 +6,17 @@ from _pytest.logging import LogCaptureFixture
 import pytest
 import logging
 
-from logger.logger_ import log, console
+from logger.logger_ import console
 
 
 def pytest_addoption(parser):
     """Add a command line option to disable logger."""
     parser.addoption("--log-disable", action="append", default=[], help="disable specific loggers")
     parser.addoption("--cmdopt", action="store", default="type1", help="my option: type1 or type2")
-    # print(Color.GREEN + "\n" + repr('pytest_addoption'))
 
 
 def pytest_runtest_call(item: Item):
-    # https: // docs.pytest.org / en / 6.2.x / reference.html
+    # https://docs.pytest.org/en/6.2.x/reference.html
     console.rule(f"[green]{item.parent.name}[/]::[yellow bold]{item.name}[/]")
 
 

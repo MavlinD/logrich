@@ -1,7 +1,4 @@
-import os
 from pydantic import BaseSettings
-
-BASE_DIR = os.path.dirname(__file__)
 
 DOTENV_FILE = "./.env"
 
@@ -14,8 +11,6 @@ class Settings(BaseSettings):
     class Config:
         env_file = DOTENV_FILE
         env_file_encoding = "utf-8"
-
-    DEBUG: bool
 
     LOG_LEVEL: int = 0
     # макисмальная длина текста чтобы разместить его на одной линии с уровнем лога
