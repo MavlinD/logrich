@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     # макисмальная длина текста чтобы разместить его на одной линии с уровнем лога
     MAX_WITH_LOG_OF_OBJ: int = 120
     LOGURU_FORMAT: str = "%level% {level:<7} [/]%%[#858585]{file}...[/][#eb4034]{line}[/]"
+    MIN_WIDTH: int = 12
+    MAX_WIDTH: int = 15
+    RATIO_MAIN: int = 80
+    RATIO_FROM: int = 40
 
 
 config = Settings()

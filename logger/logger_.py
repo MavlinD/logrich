@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
 from loguru import logger, _handler
-from rich.errors import MissingStyle
+from rich.errors import MissingStyle, MarkupError
 from rich.highlighter import ReprHighlighter, _combine_regex as combine_regex
 from rich.pretty import pprint
 from rich.table import Table
@@ -172,15 +172,18 @@ class MySynk:
                 expand=True,
                 box=None,
             )
-            table.add_column(justify="left", min_width=12, max_width=15)
-            table.add_column(ratio=80, overflow="fold", style=style)
-            table.add_column(justify="right", ratio=40, overflow="fold")
+            table.add_column(justify="left", min_width=config.MIN_WIDTH, max_width=config.MAX_WIDTH)
+            table.add_column(ratio=config.RATIO_MAIN, overflow="fold", style=style)
+            table.add_column(justify="right", ratio=config.RATIO_FROM, overflow="fold")
             table.add_column(ratio=2, overflow="crop")  # для паддинга справа
             table.add_row(f"{first_line.level}", f"{first_line.message}", f"{first_line.source}")
             # pprint(table)
             console_dict.print(table)
         except MissingStyle:
             pprint(f"Стиль {style} не найден")
+        except MarkupError as err:
+            pprint(err)
+            ...
 
     def restore_message(self):
         """пытается сериализовать основное тело записи лога"""
