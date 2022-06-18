@@ -1,3 +1,5 @@
+import sys
+
 from _pytest.nodes import Item
 
 from loguru import logger
@@ -6,6 +8,7 @@ from _pytest.logging import LogCaptureFixture
 import pytest
 import logging
 
+from logger.config import config
 from logger.logger_ import console
 
 
@@ -40,6 +43,13 @@ def run_before_and_after_tests(tmpdir):
 def caplog(caplog: LogCaptureFixture):
     # https://loguru.readthedocs.io/en/stable/resources/migration.html#making-things-work-with-pytest-and-caplog
     # https://florian-dahlitz.de/articles/logging-made-easy-with-loguru#wait-there-is-more
-    handler_id = logger.add(caplog.handler)
+    # handler_id = logger.add(caplog.handler)
+    logger.remove()
+    handler_id = logger.add(
+        sys.stdout,
+        level=config.LOG_LEVEL,
+        format=config.LOGURU_EXCEPTION_FORMAT,
+        backtrace=False,
+    )
     yield caplog
     logger.remove(handler_id)

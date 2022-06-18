@@ -1,3 +1,4 @@
+import sys
 from typing import NamedTuple
 
 from loguru import logger, _handler
@@ -8,10 +9,6 @@ from rich.console import Console
 
 from logger.color_scheme import MyReprHighlighter, theme
 from logger.config import config
-
-from rich.traceback import install
-
-install(show_locals=True)
 
 # https://flaviocopes.com/rgb-color-codes/
 # https://loguru.readthedocs.io/en/stable/api/logger.html#message
@@ -69,7 +66,6 @@ class MySynk:
         self.obj = self.log_entry.record.get("extra").get("o")
         print_rule = self.log_entry.record.get("extra").get("rule")
         self._message = self.log_entry.record["message"]
-        # pprint(self)
         self.restore_message()
         self.print_log_header()
         self.print_compiled_message()
@@ -110,13 +106,11 @@ class MySynk:
             table.add_column(ratio=config.RATIO_MAIN, overflow="fold", style=style)
             table.add_column(justify="right", ratio=config.RATIO_FROM, overflow="fold")
             table.add_column(ratio=2, overflow="crop")  # для паддинга справа
-            # table.add_row(f"{first_line.level}")
-            # table.add_row(f"{first_line.source}")
+
             table.add_row(f"{first_line.level}", f"{first_line.message}", f"{first_line.source}")
-            # pprint(first_line.source)
-            # pprint(first_line.message)
+
             console_dict.print(table)
-            # console_dict.print(first_line.source)
+
         except MissingStyle:
             pprint(f"Стиль {style} не найден")
         except MarkupError as err:
@@ -158,13 +152,27 @@ class MySynk:
             return
 
 
-# logger.remove()
-#
-# logger.add(
-#     sink=MySynk,
-#     level=config.LOG_LEVEL,
-#     format=config.LOGURU_FORMAT,
-#     backtrace=False,
-# )
-#
-# log = logger
+logger.remove()
+
+# для всех записей кроме исключений
+logger.add(
+    sink=MySynk,
+    level=config.LOG_LEVEL,
+    format=config.LOGURU_GENERIC_FORMAT,
+    backtrace=False,
+    catch=False,
+    filter=lambda record: record["extra"].get("name") == "all",
+)
+
+# только для исключений
+logger.add(
+    sys.stdout,
+    filter=lambda record: record["extra"].get("name") == "err",
+    format=config.LOGURU_EXCEPTION_FORMAT,
+    backtrace=False,
+    catch=False,
+)
+
+errlog = logger.bind(name="err")
+
+log = logger.bind(name="all")

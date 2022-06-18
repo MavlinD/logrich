@@ -1,48 +1,28 @@
-# import pytest
-# import rich
+import pytest
 
-# from loguru import logger
 # from rich.traceback import install
 
 # install(show_locals=True)
 
 
-# from logger.config import config
-# from logger.logger_ import log
+from logger.logger_ import log, errlog
 
 
-# @rich.catch
-def func():
-    return 1 / 0
+# @errlog.catch
+t = 999941211125491959
 
 
-# @log.catch
-# def del_zero(arg):
-#     return arg / 0
+# @errlog.catch(message="Ой вэй, а мы и не знали...")
+@errlog.catch(message="a" * 160)
+def del_zero(arg):
+    return arg / 0
+
+
+# del_zero(77)
 
 
 def test_too():
-    # @log.catch(message="Because we never know...")
-    # install(show_locals=True)
+    # def test_too(caplog):
 
-    t = 1111545997992
-    # func()
-    # del_zero(5)
-
-    def nested(c):
-        from loguru import logger
-
-        try:
-            func2(5, c)
-        except ZeroDivisionError:
-            logger.exception("What?!")
-
-    nested(0)
-
-
-# del_zero(5)
-# log.exception("wtf?")
-
-
-def func2(a, b):
-    return a / b
+    del_zero(5)
+    log.debug("a" * 160)
