@@ -10,4 +10,4 @@ def test_one():
     log.warning(65465464226)
     log.debug("", o=config)
     log.debug(config)
-    log.critical(65465464226)
+    log.critical(6545464226)
