@@ -1,6 +1,7 @@
 import sys
 from typing import NamedTuple
 
+import stackprinter
 from loguru import logger, _handler
 from rich.errors import MissingStyle, MarkupError
 from rich.pretty import pprint
@@ -155,14 +156,41 @@ class MySynk:
 logger.remove()
 
 # для всех записей кроме исключений
-logger.add(
-    sink=MySynk,
-    level=config.LOG_LEVEL,
-    format=config.LOGURU_GENERIC_FORMAT,
-    backtrace=False,
-    catch=False,
-    filter=lambda record: record["extra"].get("name") == "all",
-)
+# logger.add(
+#     sink=MySynk,
+#     level=config.LOG_LEVEL,
+#     format=config.LOGURU_GENERIC_FORMAT,
+#     backtrace=False,
+#     catch=False,
+#     filter=lambda record: record["extra"].get("name") == "all",
+# )
+
+
+def format2(record):
+    format_ = "{time} {message}\n"
+    # format_ = config.LOGURU_EXCEPTION_FORMAT + "\n"
+    stackprinter.set_excepthook(style="darkbg2")
+
+    if record["exception"] is not None:
+        record["extra"]["stack"] = stackprinter.format(record["exception"])
+        format_ += "{extra[stack]}\n"
+
+    return format_
+
+
+def format3(record):
+    # format_ = "{time} {message}\n"
+    format_ = config.LOGURU_EXCEPTION_FORMAT + "\n"
+    # stackprinter.set_excepthook(style="darkbg2")
+
+    if record["exception"] is not None:
+        record["extra"]["stack"] = stackprinter.format(record["exception"])
+        # record["extra"]["stack"] = record["exception"]
+        # sys.stderr.write(repr(record["exception"]))
+        # sys.stderr.write(sys.exc_info())
+        format_ += "{extra[stack]}\n"
+
+    return format_
 
 
 class ExcSynk:
@@ -187,9 +215,15 @@ class ExcSynk:
         # self._message = self.log_entry.record["message"]
         # return sys.stdout
         # print(repr(arg))
-        print(exception)
+        # print(exception)
         # print(repr(kwargs))
-        # sys.stdout.write(*arg)
+        # sys.stderr.write(exception)
+        # import stackprinter
+        # stackprinter.set_excepthook(style="darkbg2")
+        # stackprinter.show()
+        stackprinter.show(style="darkbg", source_lines=4)
+
+        # sys.stdout.write(exception)
         ...
         # self.restore_message()
         # self.print_log_header()
@@ -201,14 +235,20 @@ class ExcSynk:
 
 # только для исключений
 logger.add(
+    # sys.stdout,
     # ExcSynk,
-    sys.stdout,
+    sys.stderr,
+    # stackprinter.format,
     filter=lambda record: record["extra"].get("name") == "err",
     format=config.LOGURU_EXCEPTION_FORMAT,
+    # format=format3,
+    # format=format2,
     backtrace=False,
     catch=False,
 )
 
-errlog = logger.bind(name="err")  # .opt(colors=True)
+# errlog = logger.bind(name="err")
+# errlog = logger.opt(colors=True, exception=False).bind(name="err")
+errlog = logger.opt(colors=True, exception=True, record=False).bind(name="err")
 
-log = logger.bind(name="all")
+# log = logger.bind(name="all")

@@ -12,6 +12,7 @@ watchdog = "2.0.3"
 loguru = "^0.6.0"
 rich = "^12.4.4"
 pydantic = {extras = ["dotenv"], version = "^1.9.1"}
+stackprinter = "^0.2.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.4"

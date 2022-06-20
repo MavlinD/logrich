@@ -366,6 +366,14 @@ pygments = ">=2.6.0,<3.0.0"
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 
 [[package]]
+name = "stackprinter"
+version = "0.2.6"
+description = "Debug-friendly stack traces, with variable values and semantic highlighting"
+category = "main"
+optional = false
+python-versions = ">=3.4"
+
+[[package]]
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
@@ -430,7 +438,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "b51c3b0397c863c6b27f028932d052d07f96741d442b8a17601c399735839cdc"
+content-hash = "5a23881c716515b8beb763f3e9d7c3b6201b48a8d6fd2b25847d595fea30c317"
 
 [metadata.files]
 astroid = [
@@ -692,6 +700,10 @@ python-dotenv = [
 rich = [
     {file = "rich-12.4.4-py3-none-any.whl", hash = "sha256:d2bbd99c320a2532ac71ff6a3164867884357da3e3301f0240090c5d2fdac7ec"},
     {file = "rich-12.4.4.tar.gz", hash = "sha256:4c586de507202505346f3e32d1363eb9ed6932f0c2f63184dea88983ff4971e2"},
+]
+stackprinter = [
+    {file = "stackprinter-0.2.6-py3-none-any.whl", hash = "sha256:163d7620ef8afab7c5e79c533ec1a424b15c6737faeef592b51846a35926bd82"},
+    {file = "stackprinter-0.2.6.tar.gz", hash = "sha256:032adf196355e323a25f29de312ea0ba8077036443e4c9ddb55f83fb03d3685d"},
 ]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
