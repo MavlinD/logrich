@@ -125,7 +125,7 @@ class MySynk:
                 try:
                     self.compilied_message = eval(self._message)
                 except SyntaxError as err:
-                    pprint(err)
+                    # pprint(err)
                     self.is_compile_error = True
                     # вероятно это строка
                     ...
@@ -156,26 +156,41 @@ class MySynk:
 logger.remove()
 
 # для всех записей кроме исключений
-# logger.add(
-#     sink=MySynk,
-#     level=config.LOG_LEVEL,
-#     format=config.LOGURU_GENERIC_FORMAT,
-#     backtrace=False,
-#     catch=False,
-#     filter=lambda record: record["extra"].get("name") == "all",
-# )
+logger.add(
+    sink=MySynk,
+    level=config.LOG_LEVEL,
+    format=config.LOGURU_GENERIC_FORMAT,
+    backtrace=False,
+    catch=False,
+    filter=lambda record: record["extra"].get("name") == "all",
+)
 
 
 def format2(record):
-    format_ = "{time} {message}\n"
-    # format_ = config.LOGURU_EXCEPTION_FORMAT + "\n"
-    stackprinter.set_excepthook(style="darkbg2")
+    # format_ = "{time} {message}\n"
+    format_ = config.LOGURU_EXCEPTION_FORMAT + "\n"
+    # stackprinter.set_excepthook(style="darkbg2")
+    print("=" * 20)
+    # print(record["exception"])
+    # print(type(record["exception"]))  # loguru._recattrs.RecordException
+    # print("=" * 20)
 
     if record["exception"] is not None:
-        record["extra"]["stack"] = stackprinter.format(record["exception"])
-        format_ += "{extra[stack]}\n"
+        # record["extra"]["stack"] = stackprinter.format(record["exception"])
+        # record["extra"]["stack"] = 'stackprinter.format(record["exception"])'
+        ...
+        # stackprinter.show(record["exception"], style="darkbg2")
+        format_ += "{stack}\n"
+        # format_ += "{extra[stack]}\n"
 
+    # return record["exception"]
     return format_
+
+
+def format4(record):
+    # format_ = "{time} {message}\n"
+    # return repr(record)
+    return config.LOGURU_EXCEPTION_FORMAT
 
 
 def format3(record):
@@ -199,7 +214,8 @@ class ExcSynk:
     is_printed_compile_message = False
     is_compile_error = None
 
-    def __init__(self, exception):
+    def __init__(self, record):
+        # https://docs-python.ru/standart-library/modul-sys-python/obekty-stdin-stdout-stderr-modulja-sys/
         # def __init__(self, log_entry: _handler.Message):
         # def __init__(self, *arg, **kwargs):
         """печатает запись лога"""
@@ -221,9 +237,18 @@ class ExcSynk:
         # import stackprinter
         # stackprinter.set_excepthook(style="darkbg2")
         # stackprinter.show()
-        stackprinter.show(style="darkbg", source_lines=4)
+        # stackprinter.show(style="darkbg", source_lines=4)
 
-        # sys.stdout.write(exception)
+        # sys.stdout.write(record) # уже отформатированное stackprinter, но без цвета
+        # t = console_dict.render(record)
+        # t = console_dict.render_str(record)
+        # print(record)
+        # sys.stderr.flush()
+        console.print(record)
+        # sys.stderr.write(record)
+        # console_dict.print(record)
+        # console_dict.log(record)
+        # sys.stdout.write(record["exception"])
         ...
         # self.restore_message()
         # self.print_log_header()
@@ -233,15 +258,108 @@ class ExcSynk:
         #     console.rule(style="#33adff")
 
 
+import traceback
+from itertools import takewhile
+
+
+def tracing_formatter(record):
+    # Filter out frames coming from Loguru internals
+    frames = takewhile(lambda f: "/loguru/" not in f.filename, traceback.extract_stack())
+    stack = " > ".join("{}:{}:{}".format(f.filename, f.name, f.lineno) for f in frames)
+    record["extra"]["stack"] = stack
+    return "{level} | {extra[stack]} - {message}\n{exception}"
+
+
+def print_tbl(level, message, file, line, style=None):
+    table = Table(
+        highlight=True,
+        show_header=False,
+        padding=0,
+        collapse_padding=True,
+        show_edge=False,
+        show_lines=False,
+        show_footer=False,
+        expand=True,
+        box=None,
+    )
+    table.add_column(justify="left", min_width=config.MIN_WIDTH, max_width=config.MAX_WIDTH)
+    # table.add_column(ratio=config.RATIO_MAIN, overflow="fold")
+    table.add_column(ratio=config.RATIO_MAIN, overflow="fold", style="error_msg")
+    table.add_column(justify="right", ratio=config.RATIO_FROM, overflow="fold")
+    table.add_column(ratio=2, overflow="crop")  # для паддинга справа
+
+    # table.add_row(None, f"{message}", f"{'first_line.source'}")
+    # table.add_row(None, f"{message}", None)
+    table.add_row(
+        f"[red bold reverse] {level:<8}[/]",
+        f"{message}",
+        f"[#858585]{file}...[/][#eb4034]{line}[/]",
+    )
+    # console_dict.print(table)
+    # return table
+    with console.capture() as capture:
+        # console.print("[bold magenta]Hello World[/]")
+        console_dict.print(table)
+    res = capture.get()
+    # pprint(capture.get())
+    return res
+
+
+LOGURU_EXCEPTION_FORMAT_LONG: str = (
+    # "<lvl><v><r> {level:<7} </></></lvl>{extra[msg]}<fg #858585>{file:>112}...</>"
+    # "<fg #eb4034>{line}</>\n{exception}"
+    "{extra[msg]}\n{exception}"
+)
+
+
+class Formatter:
+    def __init__(self):
+        self.padding = 0
+        # self.fmt = "{time} | {level: <8} | {name}:{function}:{line}{extra[padding]} | {message}\n{exception}"
+        self.fmt = config.LOGURU_EXCEPTION_FORMAT + "\n{exception}"
+
+    # self.fmt = config.LOGURU_EXCEPTION_FORMAT + "\n" + "{message}\n{exception}"
+
+    def format(self, record):
+        # length = len("{name}:{function}:{line}".format(**record))
+        message = record.get("message")
+        line = record.get("line")
+        level = record.get("level")
+        file = record.get("file")
+        msg = print_tbl(level, message, file, line)
+        # msg = print_tbl(message, None)
+        record["extra"]["msg"] = msg
+        return LOGURU_EXCEPTION_FORMAT_LONG
+        return config.LOGURU_EXCEPTION_FORMAT
+        # length_msg = len(message)
+        # if length_msg > config.MAX_WITH_LOG_OF_OBJ:
+        #     self.fmt = (
+        #         LOGURU_EXCEPTION_FORMAT_LONG
+        #         + "\n{extra[msg]}\n{exception}"
+        #         # + "\n<lvl><n>{message:->80}</></>\n{extra[msg]}\n{exception}"
+        #     )
+
+        # self.padding = max(self.padding, length)
+        # record["extra"]["padding"] = " " * (self.padding - length)
+        # return self.fmt
+
+
+formatter = Formatter()
+
+
 # только для исключений
+# сначала работает synk, затем форматтер
 logger.add(
     # sys.stdout,
     # ExcSynk,
     sys.stderr,
     # stackprinter.format,
     filter=lambda record: record["extra"].get("name") == "err",
-    format=config.LOGURU_EXCEPTION_FORMAT,
+    # format=config.LOGURU_EXCEPTION_FORMAT,
     # format=format3,
+    # format=format4,
+    format=formatter.format,
+    # format=tracing_formatter,
     # format=format2,
     backtrace=False,
     catch=False,
@@ -251,4 +369,4 @@ logger.add(
 # errlog = logger.opt(colors=True, exception=False).bind(name="err")
 errlog = logger.opt(colors=True, exception=True, record=False).bind(name="err")
 
-# log = logger.bind(name="all")
+log = logger.bind(name="all")

@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     LOGURU_GENERIC_FORMAT: str = "%level% {level:<7} [/]%%[#858585]{file}...[/][#eb4034]{line}[/]"
     # https://loguru.readthedocs.io/en/stable/resources/recipes.html#adapting-colors-and-format-of-logged-messages-dynamically
     # https://docs-python.ru/standart-library/modul-string-python/klass-template-modulja-string/
+    # https://loguru.readthedocs.io/en/stable/api/logger.html#color
     LOGURU_EXCEPTION_FORMAT: str = (
         "<lvl><v><r> {level:<7} </></></lvl>"
         "<r>  {message:<69} </>"
