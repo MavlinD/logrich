@@ -2,6 +2,7 @@ import sys
 from typing import NamedTuple
 
 from loguru import logger, _handler
+from rich import json
 from rich.errors import MissingStyle, MarkupError
 from rich.pretty import pprint
 from rich.table import Table
@@ -169,7 +170,7 @@ def format_regular_msg(record):
     level = record.get("level")
     obj = record.get("extra").get("o")
     # print("=" * 20)
-    # print(level.name)
+    # print(type(obj))
     # print("=" * 20)
     file = record.get("file")
     msg = print_tbl(
@@ -194,12 +195,27 @@ def format_regular_msg(record):
     # return "{extra[obj]}"
     # return "{extra[msg]}\n{extra[obj]}"
     # record["extra"]["obj"] = obj
-    record["extra"]["obj"] = ccapt(obj)
     if obj:
+        record["extra"]["obj"] = ccapt(obj)
         return "{extra[msg]}\n{extra[obj]}"
     return "{extra[msg]}"
-    # return "{extra[msg]}\n{extra[obj]}"
+    # return "{extra[msg]}\n{extra[serialized]}\n"
     # return config.LOGURU_GENERIC_FORMAT
+
+
+logger.level("foobar", no=33, icon="🤖", color="<blue>")
+
+from functools import partialmethod
+
+
+def serialize(record):
+    subset = {"timestamp": record["time"].timestamp(), "message": record["message"]}
+    return json.dumps(subset)
+
+
+def sink(message):
+    serialized = serialize(message.record)
+    print(serialized)
 
 
 # для всех записей кроме исключений
@@ -207,6 +223,7 @@ logger.add(
     # sink=print,
     # print,
     sink=sys.stdout,
+    # sink=sink,
     # pprint,
     # console_dict.log,
     # console_dict.print,
@@ -219,6 +236,31 @@ logger.add(
     filter=lambda record: record["extra"].get("name") == "all",
 )
 
+extra = None
+
+
+def sinko(message):
+    # nonlocal extra
+    print(type(message))
+    extra = message.record["extra"]
+
+
+# logger.add(
+#     sink=sinko,
+#     # sink=sys.stdout,
+#     # level=config.LOG_LEVEL,
+#     # format=format_regular_msg,
+#     # format=config.LOGURU_GENERIC_FORMAT_OBJ,
+#     # backtrace=False,
+#     # catch=False,
+#     # filter=lambda record: record["extra"].get("name") == "obj",
+# )
+
+
+# logger = logger.patch(
+#     lambda record: record.update(message=record["extra"].get("o", record["message"]))
+# )
+
 # только для исключений
 # сначала работает synk, затем форматтер
 logger.add(
@@ -226,9 +268,127 @@ logger.add(
     filter=lambda record: record["extra"].get("name") == "err",
     format=format_exception,
     backtrace=False,
-    catch=False,
+    catch=True,
+    # diagnose=False,
 )
 
-errlog = logger.opt(colors=True, exception=True, record=False).bind(name="err")
 
-log = logger.bind(name="all")
+def patching(record):
+    message = record["message"]
+    obj = record["extra"].get("o")
+    # print(5555555555555)
+    print(type(record))
+    # try:
+    #     record.update(message=eval(message))
+    # except Exception:
+    #     ...
+    # if obj:
+    #     record.update(message=ccapt(obj))
+    if not isinstance(message, str):
+        print(777777777777)
+        # record["extra"]["o"] = message
+        # record.update(message=record["extra"].get("o", record["message"]))
+    # record["extra"]["serialized"] = record["message"]
+
+
+# logger = logger.patch(patching)
+
+errlog = logger.opt(colors=True, exception=True, record=False).bind(name="err")
+# objlog = logger.opt(colors=True, exception=True, record=False).bind(obj=True)
+
+
+# log = func()
+
+log_ = logger.opt(record=False, colors=True, raw=False).bind(name="all")
+
+# logo = logger.opt(record=True, raw=True).bind(name="obj")
+# run = True
+
+
+def func(
+    *args,
+    # first_run=False,
+    **kwargs,
+):
+    # print("+" * 20)
+    # init =
+    # print(first_run)
+    # print(type(args[2]))
+    # if first_run:
+    #     run=False
+    # if not run:
+    #     return
+    print(args)
+    print(kwargs)
+    if isinstance(args[2], dict):
+        return getattr(log, args[1])("", o=args[2])
+    obj = kwargs.get("o")
+
+    if obj:
+        return getattr(log, args[1])(args[2], o=obj)
+
+    return getattr(log, args[1])(args[2])
+    # return log.debug(args[2])
+    # return logger.__class__.log
+    # return logger.opt(record=False, colors=True, raw=False).bind(name="all")
+
+
+# logger.__class__.debug = partialmethod(logger.__class__.log, "foobar", "*args")
+# logger.__class__.foobar = partialmethod(func, "debug")
+# log.__class__.debug = partialmethod(
+#     func,
+#     "debug",
+# first_run=True,
+# init2=True,
+# )
+
+
+def print_log(level, *args, **kwargs):
+    if isinstance(args[0], dict):
+        return getattr(log_, level)("", o=args[0])
+    obj = kwargs.get("o")
+
+    if obj:
+        return getattr(log_, level)(args[0], o=obj)
+
+    return getattr(log_, level)(args[0])
+
+
+class Logger:
+    # @staticmethod
+
+    # @classmethod
+    @staticmethod
+    def debug(*args, **kwargs):
+        print_log("debug", *args, **kwargs)
+
+    @staticmethod
+    def trace(*args, **kwargs):
+        print_log("trace", *args, **kwargs)
+
+    @staticmethod
+    def info(*args, **kwargs):
+        print_log("info", *args, **kwargs)
+
+    @staticmethod
+    def warning(*args, **kwargs):
+        print_log("warning", *args, **kwargs)
+
+    @staticmethod
+    def error(*args, **kwargs):
+        print_log("error", *args, **kwargs)
+
+    @staticmethod
+    def critical(*args, **kwargs):
+        print_log("critical", *args, **kwargs)
+
+        # print(args)
+        # print("-" * 20)
+        # print(kwargs)
+        # print("=" * 20)
+        # return
+
+        # return log.debug(*args, **kwargs)
+
+
+log = Logger()

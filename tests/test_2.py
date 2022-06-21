@@ -15,7 +15,10 @@ from logger.logger_ import log
 t = 899
 
 # @errlog.catch(message="Ой вэй, а мы и не знали...")
-@errlog.catch(message="a" * 160)
+
+
+@errlog.catch
+# @errlog.catch(message="a=" * 160)
 def del_zero(arg):
     y = 9
     return arg / 0
@@ -73,12 +76,32 @@ BIRDS = {
 
 def test_too():
     # def test_too(caplog):
-    i = 872719
-    log.debug("+++++9", o=obj)
+    i = 187742719975774171
+
+    # logo.debug("Foo {record}", record=123)
+    # logo.opt(record=True).debug(obj)
+    # logo.opt(record=True).debug("1")
+    # logo.debug("1")
+    # logo.debug(record=obj)
+    log.debug(obj)
+    log.debug("tst-obj", o=obj)
+    log.debug("obj")
+    log.info(obj)
+    log.trace("tst-obj", o=obj)
+    log.warning("obj")
+    log.error("err " * 100)
+    log.critical(BIRDS)
+    log.debug("===============")
+    del_zero(5)
     # return
     log.debug(obj)
+    # log.foobar(obj)
+    # log.foobar("tst-obj", o=obj)
+    # log.foobar("obj")
+    # logo.debug(repr(obj))
+    log.debug("+++++9", o=obj)
+    log.debug(obj)
     log.debug("m" * 16)
-    del_zero(5)
     log.debug("a" * 160)
     str_ = "у " * 61
     log.debug(str_)
@@ -88,5 +111,8 @@ def test_too():
     log.debug(str_)
     log.debug("", o=BIRDS)
     # log.info(BIRDS)
-
+    # log.foobar("46464")
+    log.info("46464")
+    # log.
+    # log.fo
     # del_zero2(555555)

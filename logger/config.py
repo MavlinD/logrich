@@ -25,7 +25,9 @@ class Settings(BaseSettings):
 
     # LOGURU_GENERIC_FORMAT: str = "{extra[msg]}\n{message}"
     LOGURU_GENERIC_FORMAT: str = "{extra[msg]}"
+    LOGURU_GENERIC_FORMAT_OBJ: str = "{message}"
     LOGURU_EXCEPTION_FORMAT_LONG: str = "{extra[msg]}\n{exception}\n"
+    LOGURU_DIAGNOSE: str = ("NO",)
 
     MIN_WIDTH: int = 12
     MAX_WIDTH: int = 15
