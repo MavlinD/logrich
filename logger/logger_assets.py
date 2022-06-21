@@ -1,5 +1,5 @@
 from __future__ import annotations
-import sys
+from typing import Any
 
 import loguru
 
@@ -19,7 +19,7 @@ class MyReprHighlighter(ReprHighlighter):
     # https://regex101.com/r/zR2hP5/1
     base_style = "repr."
     highlights = [
-        r"(?<![\\\w])(?P<str>b?'''.*?(?<!\\)'''|b?'.*?(?<!\\)'|b?\"\"\".*?(?<!\\)\"\"\"|b?\".*?(?<!\\)\")",
+        r"'(?P<str>[\S\s]*)'",
         r":\s\'(?P<value>.+)\'",
         r"['](?P<string_list_tuple>\w+)[']",
         r"(?P<digit2>\d*)[\"\s,[,(](?P<digit>\d*\.?\s?-?\d*-?\.?\d+)",
@@ -157,79 +157,37 @@ def print_tbl(
     return capture.get()
 
 
-def format_extra_obj_orig(message: object) -> str:
-    """форматирует вывод исключений в цвете и в заданной ширине, исп-ся rich"""
-    with console.capture() as capture:
-        console_dict.print(message, markup=True, width=75)
-        sys.stdout.write("\033[F")  # back to previous line
-        # sys.stdout.write("\033[K")  # clear line
+def print_message_for_table(message: Any) -> str:
+    # инстанс консоли rich
+    console2 = Console(
+        no_color=True,
+        markup=False,
+        safe_box=True,
+        highlight=False,
+    )
+
+    with console2.capture() as capture:
+        console2.print(
+            message,
+            markup=False,
+            width=80,
+        )
     return capture.get()
 
 
 def format_extra_obj(message: object) -> str:
     """форматирует вывод исключений в цвете и в заданной ширине, исп-ся rich"""
     table = Table(
-        padding=(0, 1),
+        padding=(0, 2),
         highlight=True,
-        # show_header=False,
-        # padding=0,
-        # collapse_padding=True,
-        # show_edge=False,
-        # show_lines=False,
         show_footer=False,
-        # expand=True,
         box=None,
     )
-    # LEVEL
-    # table.add_column(
-    #     justify="left",
-    #     min_width=3,
-    #     max_width=3,
-    # )
 
-    table.add_column(
-        # justify="right",
-        # ratio=config.RATIO_MAIN,
-        # overflow="fold",
-    )
-
-    def msg():
-        # инстанс консоли rich
-        console_dict2 = Console(
-            # highlighter=MyReprHighlighter(),
-            theme=theme,
-            no_color=True,
-            # markup=True,
-            markup=False,
-            log_time=False,
-            log_path=False,
-            safe_box=True,
-            record=True,
-            emoji=False,
-            highlight=False,
-        )
-
-        with console_dict2.capture() as capture:
-            console_dict2.print(
-                message,
-                markup=False,
-                width=75,
-                # markup=True,
-                # no_color=True,
-            )
-            # sys.stdout.write("\033[F")  # back to previous line
-            # sys.stdout.write("\033[K")  # clear line
-        return capture.get()
+    table.add_column()
 
     # MESSAGE
-
-    table.add_row(
-        "",
-        f"{msg()}",
-    )
-
-    # FILE
-    # return capture.get()
+    table.add_row(print_message_for_table(message=message))
 
     with console.capture() as capture2:
         console_dict.print(table, markup=True)

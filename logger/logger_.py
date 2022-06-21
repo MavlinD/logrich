@@ -57,6 +57,7 @@ def format_regular_record(record: loguru.Record) -> str:
             if obj:
                 record["extra"]["obj"] = format_extra_obj(obj)
                 sys.stdout.write("\033[F")  # back to previous line
+                # sys.stdout.write("\033[K")  # clear line
                 return LOGURU_GENERIC_FORMAT + "\n{extra[obj]}"
     return LOGURU_GENERIC_FORMAT
 

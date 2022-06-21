@@ -60,13 +60,13 @@ BIRDS = {
 
 
 def test_too():
-    i = 49
+    i = 496
 
     log.debug("obj")
 
     log.debug(obj)
     log.warning("obj")
-    return
+    # return
     log.trace("tst-obj", o=obj)
     log.error("err " * 100)
     log.critical(BIRDS)
