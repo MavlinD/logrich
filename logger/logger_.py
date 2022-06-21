@@ -39,7 +39,7 @@ def format_exception_record(record: loguru.Record) -> str:
     return config.LOGURU_EXCEPTION_FORMAT_LONG
 
 
-def format_regular_record(record: loguru.Record) -> dict:
+def format_regular_record(record: loguru.Record) -> str:
     """форматирует все записи кроме исключений"""
     message = record["message"]
     line = record["line"]

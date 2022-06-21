@@ -1,3 +1,4 @@
+# https://pre-commit.com/
 default_stages: [commit]
 
 default_language_version:
