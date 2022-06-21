@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     # https://loguru.readthedocs.io/en/stable/api/logger.html#color
     # https://rich.readthedocs.io/en/stable/style.html
 
+    # LOGURU_GENERIC_FORMAT: str = "{extra[msg]}\n{message}"
     LOGURU_GENERIC_FORMAT: str = "{extra[msg]}"
     LOGURU_EXCEPTION_FORMAT_LONG: str = "{extra[msg]}\n{exception}\n"
 

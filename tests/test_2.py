@@ -52,9 +52,31 @@ obj = {
 }
 
 
+# @rich.repr.auto
+class Bird:
+    def __init__(self, name, eats=None, fly=True, extinct=False):
+        self.name = name
+        self.eats = list(eats) if eats else []
+        self.fly = fly
+        self.extinct = extinct
+
+    def __repr__(self):
+        return f"Bird({self.name}, eats={self.eats!r}, fly={self.fly!r}, extinct={self.extinct!r})"
+
+
+BIRDS = {
+    "gull": Bird("gull", eats=["fish", "chips", "ice cream", "sausage rolls"]),
+    "penguin": Bird("penguin", eats=["fish"], fly=False),
+    "dodo": Bird("dodo", eats=["fruit"], fly=False, extinct=True),
+}
+
+
 def test_too():
     # def test_too(caplog):
-    i = 57957
+    i = 872719
+    log.debug("+++++9", o=obj)
+    # return
+    log.debug(obj)
     log.debug("m" * 16)
     del_zero(5)
     log.debug("a" * 160)
@@ -62,8 +84,9 @@ def test_too():
     log.debug(str_)
     str_ = "a" * 161
     log.debug(obj)
-    log.debug("", o=obj)
     log.info(str_)
     log.debug(str_)
+    log.debug("", o=BIRDS)
+    # log.info(BIRDS)
 
     # del_zero2(555555)

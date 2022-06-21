@@ -6,7 +6,7 @@ from rich.errors import MissingStyle, MarkupError
 from rich.pretty import pprint
 from rich.table import Table
 
-from logger.logger_assets import print_tbl, console, console_dict
+from logger.logger_assets import print_tbl, console, console_dict, print_tbl_obj, ccapt
 from logger.config import config
 
 # https://flaviocopes.com/rgb-color-codes/
@@ -57,7 +57,7 @@ class MySynk:
         print_rule = self.log_entry.record.get("extra").get("rule")
         self._message = self.log_entry.record["message"]
         self.restore_message()
-        self.print_log_header()
+        # self.print_log_header()
         self.print_compiled_message()
         self.print_obj()
         if print_rule:
@@ -112,7 +112,8 @@ class MySynk:
         if not self.obj:
             if len(self._message) >= self.max_len:
                 try:
-                    self.compilied_message = eval(self._message)
+                    # self.compilied_message = eval(self._message)
+                    ...
                 except SyntaxError as err:
                     # pprint(err)
                     self.is_compile_error = True
@@ -166,6 +167,7 @@ def format_regular_msg(record):
     message = record.get("message")
     line = record.get("line")
     level = record.get("level")
+    obj = record.get("extra").get("o")
     # print("=" * 20)
     # print(level.name)
     # print("=" * 20)
@@ -175,18 +177,39 @@ def format_regular_msg(record):
         message=message,
         file=file,
         line=line,
-        style=f"{level.name.lower()}_msg"
+        # style=f"{level.name.lower()}"
+        style=level.name.lower()
         # style="debug"
         # style="error_msg"
     )
     record["extra"]["msg"] = msg
-    return config.LOGURU_GENERIC_FORMAT
+    # with console.capture() as capture:
+    #     console_dict.print(obj, markup=True, width=75)
+    # return capture.get()
+    # obj_in_tbl = print_tbl_obj(
+    #     level=level, message=obj, file=file, line=line, style=f"{level.name.lower()}"
+    # )
+    # record["extra"]["obj"] = obj_in_tbl
+    # record["extra"]["obj"] = capture.get()
+    # return "{extra[obj]}"
+    # return "{extra[msg]}\n{extra[obj]}"
+    # record["extra"]["obj"] = obj
+    record["extra"]["obj"] = ccapt(obj)
+    if obj:
+        return "{extra[msg]}\n{extra[obj]}"
+    return "{extra[msg]}"
+    # return "{extra[msg]}\n{extra[obj]}"
+    # return config.LOGURU_GENERIC_FORMAT
 
 
 # для всех записей кроме исключений
 logger.add(
     # sink=print,
+    # print,
     sink=sys.stdout,
+    # pprint,
+    # console_dict.log,
+    # console_dict.print,
     # sink=MySynk,
     level=config.LOG_LEVEL,
     format=format_regular_msg,

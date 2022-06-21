@@ -1,3 +1,5 @@
+import sys
+
 from rich.highlighter import ReprHighlighter, _combine_regex as combine_regex
 from rich.theme import Theme
 from rich.table import Table
@@ -130,13 +132,14 @@ def print_tbl(level, message, file, line, style=None):
         min_width=config.MIN_WIDTH,
         max_width=config.MAX_WIDTH,
         # style=style,
+        # style=f"{theme_fmt.get(style)}",
         # overflow="fold",
     )
     # MESSAGE
     table.add_column(
         ratio=config.RATIO_MAIN,
         overflow="fold",
-        style=f"{theme_fmt.get(style)}"
+        style=f"{level.name.lower()}_msg"
         # style=f"{theme_fmt.get('debug')}"
     )
     # table.add_column(ratio=config.RATIO_MAIN, overflow="fold", style=f"{style}_msg")
@@ -146,13 +149,25 @@ def print_tbl(level, message, file, line, style=None):
     table.add_column(ratio=2, overflow="crop")  # для паддинга справа
 
     table.add_row(
-        f"{level:<8}",
+        f"[{theme_fmt.get(style)}]{level:<8}[/]",
+        # f"{level:<8}",
         # f"[red bold reverse] {level:<8}[/]",
         f"{message}",
         f"[#858585]{file}...[/][#eb4034]{line}[/]",
     )
     with console.capture() as capture:
         console_dict.print(table, markup=True)
+    return capture.get()
+
+
+def ccapt(message):
+    with console.capture() as capture:
+        # console_dict.log(message)
+        console_dict.print(message, markup=True, width=75)
+        sys.stdout.write("\033[F")  # back to previous line
+        # sys.stdout.write("\033[K")  # clear line
+        # console_dict.print(message, markup=True, width=75, new_line_start=False)
+        # console_dict.print(message, markup=True, width=75)
     return capture.get()
 
 
@@ -177,16 +192,28 @@ def print_tbl_obj(level, message, file, line, style=None):
         # overflow="fold",
     )
     # MESSAGE
-    table.add_column(ratio=config.RATIO_MAIN, overflow="fold", style=f"{style}_msg")
+    table.add_column(
+        ratio=config.RATIO_MAIN,
+        overflow="fold",
+        # style=f"{style}_msg"
+    )
     # FILE
     table.add_column(justify="right", ratio=config.RATIO_FROM, overflow="fold")
     # LINE
     table.add_column(ratio=2, overflow="crop")  # для паддинга справа
+    # print(message)
+    # with console.capture() as capture2:
+    #     console_dict.log(message)
+    # console_dict.print(message, markup=True, width=75)
+    # return capture.get()
+    # message_ = capture2.get()
+    message_ = ccapt(message)
 
     table.add_row(
         f"{level:<8}",
         # f"[red bold reverse] {level:<8}[/]",
-        f"{message}",
+        # 'f"{ccapt(message)}"',
+        f"{message_}",
         f"[#858585]{file}...[/][#eb4034]{line}[/]",
     )
     with console.capture() as capture:
