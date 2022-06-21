@@ -115,6 +115,7 @@ console_dict = Console(
     markup=True,
     log_time=False,
     log_path=False,
+    safe_box=True,
 )
 
 
@@ -156,10 +157,80 @@ def print_tbl(
     return capture.get()
 
 
-def format_extra_obj(message: loguru.RecordException) -> str:
+def format_extra_obj_orig(message: object) -> str:
     """форматирует вывод исключений в цвете и в заданной ширине, исп-ся rich"""
     with console.capture() as capture:
         console_dict.print(message, markup=True, width=75)
         sys.stdout.write("\033[F")  # back to previous line
         # sys.stdout.write("\033[K")  # clear line
     return capture.get()
+
+
+def format_extra_obj(message: object) -> str:
+    """форматирует вывод исключений в цвете и в заданной ширине, исп-ся rich"""
+    table = Table(
+        padding=(0, 1),
+        highlight=True,
+        # show_header=False,
+        # padding=0,
+        # collapse_padding=True,
+        # show_edge=False,
+        # show_lines=False,
+        show_footer=False,
+        # expand=True,
+        box=None,
+    )
+    # LEVEL
+    # table.add_column(
+    #     justify="left",
+    #     min_width=3,
+    #     max_width=3,
+    # )
+
+    table.add_column(
+        # justify="right",
+        # ratio=config.RATIO_MAIN,
+        # overflow="fold",
+    )
+
+    def msg():
+        # инстанс консоли rich
+        console_dict2 = Console(
+            # highlighter=MyReprHighlighter(),
+            theme=theme,
+            no_color=True,
+            # markup=True,
+            markup=False,
+            log_time=False,
+            log_path=False,
+            safe_box=True,
+            record=True,
+            emoji=False,
+            highlight=False,
+        )
+
+        with console_dict2.capture() as capture:
+            console_dict2.print(
+                message,
+                markup=False,
+                width=75,
+                # markup=True,
+                # no_color=True,
+            )
+            # sys.stdout.write("\033[F")  # back to previous line
+            # sys.stdout.write("\033[K")  # clear line
+        return capture.get()
+
+    # MESSAGE
+
+    table.add_row(
+        "",
+        f"{msg()}",
+    )
+
+    # FILE
+    # return capture.get()
+
+    with console.capture() as capture2:
+        console_dict.print(table, markup=True)
+    return capture2.get()

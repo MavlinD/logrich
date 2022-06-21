@@ -56,6 +56,7 @@ def format_regular_record(record: loguru.Record) -> str:
             record["extra"]["msg"] = msg
             if obj:
                 record["extra"]["obj"] = format_extra_obj(obj)
+                sys.stdout.write("\033[F")  # back to previous line
                 return LOGURU_GENERIC_FORMAT + "\n{extra[obj]}"
     return LOGURU_GENERIC_FORMAT
 
@@ -83,7 +84,7 @@ logger.add(
 
 
 errlog = logger.opt(colors=True, exception=True).bind(name="err")
-log_ = logger.opt(colors=True).bind(name="all")
+log_ = logger.opt(lazy=False, colors=True).bind(name="all")
 
 
 def print_log(level: str, *args, **kwargs) -> None:
