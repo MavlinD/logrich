@@ -1,6 +1,9 @@
 import sys
+from typing import Generator
 
-from _pytest.nodes import Item
+from _pytest import nodes
+from _pytest.config import Config
+from _pytest.config.argparsing import Parser
 
 from loguru import logger
 from _pytest.logging import LogCaptureFixture
@@ -8,31 +11,30 @@ from _pytest.logging import LogCaptureFixture
 import pytest
 import logging
 
-from logger.config import config
-from logger.logger_ import console
+from logger.logger_assets import console
+from logger.config import config as config_
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser: Parser) -> None:
     """Add a command line option to disable logger."""
     parser.addoption("--log-disable", action="append", default=[], help="disable specific loggers")
     parser.addoption("--cmdopt", action="store", default="type1", help="my option: type1 or type2")
 
 
-def pytest_runtest_call(item: Item):
+def pytest_runtest_call(item: nodes.Item) -> None:
     # https://docs.pytest.org/en/6.2.x/reference.html
-    console.rule(f"[green]{item.parent.name}[/]::[yellow bold]{item.name}[/]")
+    console.rule(f"[green]{item.parent.name}[/]::[yellow bold]{item.name}[/]")  # type: ignore
 
 
-def pytest_configure(config):
+def pytest_configure(config: Config) -> None:
     """Disable the loggers."""
     for name in config.getoption("--log-disable", default=[]):
-        logger = logging.getLogger(name)
-        logger.propagate = False
-    called_from_test = True
+        logger_ = logging.getLogger(name)
+        logger_.propagate = False
 
 
 @pytest.fixture(autouse=True)
-def run_before_and_after_tests(tmpdir):
+def run_before_and_after_tests(tmpdir) -> Generator:
     """Fixture to execute asserts before and after a test is run"""
     # https://localcoder.org/run-code-before-and-after-each-test-in-py-test
     print()
@@ -40,15 +42,14 @@ def run_before_and_after_tests(tmpdir):
 
 
 @pytest.fixture
-def caplog(caplog: LogCaptureFixture):
+def caplog(caplog: LogCaptureFixture) -> Generator:
     # https://loguru.readthedocs.io/en/stable/resources/migration.html#making-things-work-with-pytest-and-caplog
     # https://florian-dahlitz.de/articles/logging-made-easy-with-loguru#wait-there-is-more
-    # handler_id = logger.add(caplog.handler)
     logger.remove()
     handler_id = logger.add(
         sys.stdout,
-        level=config.LOG_LEVEL,
-        format=config.LOGURU_EXCEPTION_FORMAT,
+        level=config_.LOG_LEVEL,
+        format=config_.LOGURU_EXCEPTION_FORMAT_LONG,
         backtrace=False,
     )
     yield caplog

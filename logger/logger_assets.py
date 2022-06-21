@@ -1,21 +1,21 @@
+from __future__ import annotations
 import sys
+
+import loguru
 
 from rich.highlighter import ReprHighlighter, _combine_regex as combine_regex
 from rich.theme import Theme
 from rich.table import Table
-
-# from rich import console
-
-from logger.config import config
-
-# from logger.logger_ import console_dict
 from rich.console import Console
+from logger.config import config
 
 
 console = Console()
 
 
 class MyReprHighlighter(ReprHighlighter):
+    """подсветка вывода на основе регул. выражений"""
+
     # https://regex101.com/r/zR2hP5/1
     base_style = "repr."
     highlights = [
@@ -108,7 +108,7 @@ theme_fmt = {
     "critical_msg": "#de0b2e",
 }
 
-
+# инстанс консоли rich
 console_dict = Console(
     highlighter=MyReprHighlighter(),
     theme=theme,
@@ -118,7 +118,10 @@ console_dict = Console(
 )
 
 
-def print_tbl(level, message, file, line, style=None):
+def print_tbl(
+    level: loguru.RecordLevel, message: str, file: loguru.RecordFile, line: int, style: str
+) -> str:
+    """Форматирует вывод логгера в табличном виде"""
     table = Table(
         highlight=True,
         show_header=False,
@@ -135,27 +138,16 @@ def print_tbl(level, message, file, line, style=None):
         justify="left",
         min_width=config.MIN_WIDTH,
         max_width=config.MAX_WIDTH,
-        # style=style,
-        # style=f"{theme_fmt.get(style)}",
-        # overflow="fold",
     )
     # MESSAGE
-    table.add_column(
-        ratio=config.RATIO_MAIN,
-        overflow="fold",
-        style=f"{level.name.lower()}_msg"
-        # style=f"{theme_fmt.get('debug')}"
-    )
-    # table.add_column(ratio=config.RATIO_MAIN, overflow="fold", style=f"{style}_msg")
+    table.add_column(ratio=config.RATIO_MAIN, overflow="fold", style=f"{level.name.lower()}_msg")
     # FILE
     table.add_column(justify="right", ratio=config.RATIO_FROM, overflow="fold")
     # LINE
     table.add_column(ratio=2, overflow="crop")  # для паддинга справа
 
     table.add_row(
-        f"[{theme_fmt.get(style)}]{level:<8}[/]",
-        # f"{level:<8}",
-        # f"[red bold reverse] {level:<8}[/]",
+        f"[{theme_fmt.get(style)}] {level:<9}[/]",
         f"{message}",
         f"[#858585]{file}...[/][#eb4034]{line}[/]",
     )
@@ -164,62 +156,10 @@ def print_tbl(level, message, file, line, style=None):
     return capture.get()
 
 
-def ccapt(message):
+def format_extra_obj(message: loguru.RecordException) -> str:
+    """форматирует вывод исключений в цвете и в заданной ширине, исп-ся rich"""
     with console.capture() as capture:
-        # console_dict.log(message)
         console_dict.print(message, markup=True, width=75)
         sys.stdout.write("\033[F")  # back to previous line
         # sys.stdout.write("\033[K")  # clear line
-        # console_dict.print(message, markup=True, width=75, new_line_start=False)
-        # console_dict.print(message, markup=True, width=75)
-    return capture.get()
-
-
-def print_tbl_obj(level, message, file, line, style=None):
-    table = Table(
-        highlight=True,
-        show_header=False,
-        padding=0,
-        collapse_padding=True,
-        show_edge=False,
-        show_lines=False,
-        show_footer=False,
-        expand=True,
-        box=None,
-    )
-    # LEVEL
-    table.add_column(
-        justify="left",
-        min_width=config.MIN_WIDTH,
-        max_width=config.MAX_WIDTH,
-        # style=style,
-        # overflow="fold",
-    )
-    # MESSAGE
-    table.add_column(
-        ratio=config.RATIO_MAIN,
-        overflow="fold",
-        # style=f"{style}_msg"
-    )
-    # FILE
-    table.add_column(justify="right", ratio=config.RATIO_FROM, overflow="fold")
-    # LINE
-    table.add_column(ratio=2, overflow="crop")  # для паддинга справа
-    # print(message)
-    # with console.capture() as capture2:
-    #     console_dict.log(message)
-    # console_dict.print(message, markup=True, width=75)
-    # return capture.get()
-    # message_ = capture2.get()
-    message_ = ccapt(message)
-
-    table.add_row(
-        f"{level:<8}",
-        # f"[red bold reverse] {level:<8}[/]",
-        # 'f"{ccapt(message)}"',
-        f"{message_}",
-        f"[#858585]{file}...[/][#eb4034]{line}[/]",
-    )
-    with console.capture() as capture:
-        console_dict.print(table)
     return capture.get()

@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "logger"
 version = "0.0.1"
-description = "loguru + rich = logger"
+description = "loguru + rich = nice logger"
 authors = ["Dmitry Mavlin <mavlind@list.ru>"]
 license = "GPL"
 
@@ -12,7 +12,6 @@ watchdog = "2.0.3"
 loguru = "^0.6.0"
 rich = "^12.4.4"
 pydantic = {extras = ["dotenv"], version = "^1.9.1"}
-stackprinter = "^0.2.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.4"
@@ -21,6 +20,8 @@ pytest-testmon = "1.1.1"
 pytest-watch = "4.2.0"
 black = "^22.1.0"
 pylint = "^2.12.2"
+mypy = "^0.961"
+pre-commit = "^2.19.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
