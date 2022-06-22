@@ -1,8 +1,10 @@
-###Логгер
+### Логгер
 
-####Совместная работа [loguru](https://loguru.readthedocs.io) & [rich](https://rich.readthedocs.io).
+#### Совместная работа [loguru](https://loguru.readthedocs.io) & [rich](https://rich.readthedocs.io).
 
-![Screenshot logger](wiki/screenshot_logger.png?raw=True)
+[Screenshot logger](https://disk.yandex.ru/i/JexFefETxnJavA)
+
+![Screenshot logger](wiki/screenshot_logger.png?raw=True "Screenshot")
 
 Уровень вывода исключений определяется в переменных окружения.
 Цвета, ширины и шаблоны вывода также могут быть определены в окружении.
@@ -13,7 +15,7 @@
 
 ```shell
 git clone 
-cd logger_mdv
+cd nice_logger
 poetry shell
 poetry install
 ```

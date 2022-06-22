@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "logger_mdv"
-version = "0.1.1"
+name = "nice-logger"
+version = "0.1.7"
 description = "loguru + rich = nice logger"
 authors = ["Dmitry Mavlin <mavlind@list.ru>"]
 license = "GPL"
@@ -24,10 +24,6 @@ black = "^22.1.0"
 pylint = "^2.12.2"
 mypy = "^0.961"
 pre-commit = "^2.19.0"
-
-# [tool.poetry.scripts]
-# logger = 'logger:main'
-# script_name = '{package_name}:{function_name}'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

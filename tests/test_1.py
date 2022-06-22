@@ -1,7 +1,7 @@
 from pprint import pprint
 import pytest
 
-from logger_mdv.logger_ import errlog, log
+from nice_logger.logger_ import errlog, log
 
 
 # @errlog.catch

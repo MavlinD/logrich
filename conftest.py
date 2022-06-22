@@ -11,12 +11,12 @@ from _pytest.logging import LogCaptureFixture
 import pytest
 import logging
 
-from logger_mdv.logger_assets import console
-from logger_mdv.config import config as config_
+from nice_logger.logger_assets import console
+from nice_logger.config import config as config_
 
 
 def pytest_addoption(parser: Parser) -> None:
-    """Add a command line option to disable logger_mdv."""
+    """Add a command line option to disable nice_logger."""
     parser.addoption("--log-disable", action="append", default=[], help="disable specific loggers")
     parser.addoption("--cmdopt", action="store", default="type1", help="my option: type1 or type2")
 

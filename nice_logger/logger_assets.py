@@ -7,7 +7,7 @@ from rich.highlighter import ReprHighlighter, _combine_regex as combine_regex
 from rich.theme import Theme
 from rich.table import Table
 from rich.console import Console
-from logger_mdv.config import config
+from nice_logger.config import config
 
 
 console = Console()
