@@ -6,7 +6,9 @@ from logger.logger_ import errlog, log
 
 # @errlog.catch
 # @errlog.catch(message="a=" * 160)
-@errlog.catch(message="Ой вэй, а мы и сами про это мы не знали...O_o")
+@errlog.catch(
+    message="Ой вэй, а мы и сами про это мы не знали...O_o.\nДемонстрация вывода исключений."
+)
 def del_zero(arg):
     return arg / 0
 
@@ -19,7 +21,6 @@ def del_zero2(arg):
         ...
 
 
-# @rich.repr.auto
 obj = {
     "name": "Имя, просто имя " * 5,
     "slug": 753951,
@@ -39,6 +40,7 @@ obj = {
 
 
 # @rich.repr.auto
+# декоратор формирует __repr_rich__ на основе __init__ объекта
 class Bird:
     def __init__(self, name, eats=None, fly=True, extinct=False):
         self.name = name
@@ -58,26 +60,25 @@ BIRDS = {
 
 
 def test_too():
-    i = 5
+    str_ = "у " * 61
 
     log.debug("obj")
-    log.trace("tst-obj", o=obj)
     # return
     log.warning("obj")
     log.error("err " * 100)
     log.critical("птички", o=BIRDS)
-    log.debug("===============++")
+    log.debug("===============++=====")
     # return
     log.debug("+++++9", o=obj)
     log.debug("test", obj)
     log.success("m" * 16)
     log.debug("a" * 160)
-    str_ = "у " * 61
     log.debug(str_)
     str_ = "a" * 161
     log.info(str_)
     log.debug(str_)
     del_zero(5)
     log.debug("", o=BIRDS)
-    log.critical("Ой вэй, всё пропало!")
-    log.info("46464")
+    log.critical("Это катастрофа, парень шел к успеху, но не фартнуло...(")
+    log.trace("Сообщение уровня TRACE: 5", o=obj)
+    log.info("Сообщение уровня INFO: 20")

@@ -63,7 +63,7 @@ theme = Theme(
         "info_msg": "#33ccff",
         "success_msg": "green",
         "warning_msg": "yellow",
-        "error_msg": "#b00bde",
+        "error_msg": "#ff5050",
         "critical_msg": "#de0b2e",
     }
 )
@@ -147,7 +147,7 @@ def print_tbl(
     return capture.get()
 
 
-def format_extra_obj(message: object) -> str:
+def format_extra_obj(message: Any) -> str:
     """форматирует вывод исключений в цвете и в заданной ширине, исп-ся rich"""
     table = Table(
         padding=(0, 2),
