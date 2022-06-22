@@ -1,4 +1,4 @@
-### Логгер
+###Логгер
 
 ####Совместная работа [loguru](https://loguru.readthedocs.io) & [rich](https://rich.readthedocs.io).
 
@@ -13,7 +13,7 @@
 
 ```shell
 git clone 
-cd logger
+cd logger_mdv
 poetry shell
 poetry install
 ```

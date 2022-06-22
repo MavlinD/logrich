@@ -1,14 +1,11 @@
 from pprint import pprint
 import pytest
 
-from logger.logger_ import errlog, log
+from logger_mdv.logger_ import errlog, log
 
 
 # @errlog.catch
-# @errlog.catch(message="a=" * 160)
-@errlog.catch(
-    message="Ой вэй, а мы и сами про это мы не знали...O_o.\nДемонстрация вывода исключений."
-)
+@errlog.catch(message="Because we never know...O_o.\nДемонстрация вывода исключений.")
 def del_zero(arg):
     return arg / 0
 
@@ -22,7 +19,7 @@ def del_zero2(arg):
 
 
 obj = {
-    "name": "Имя, просто имя " * 5,
+    "name": "Имя, фамилия " * 5,
     "slug": 753951,
     "slug1": 1,
     "slug2": 51,
@@ -60,25 +57,18 @@ BIRDS = {
 
 
 def test_too():
-    str_ = "у " * 61
-
-    log.debug("obj")
-    # return
-    log.warning("obj")
-    log.error("err " * 100)
-    log.critical("птички", o=BIRDS)
-    log.debug("===============++=====")
-    # return
-    log.debug("+++++9", o=obj)
-    log.debug("test", obj)
-    log.success("m" * 16)
-    log.debug("a" * 160)
-    log.debug(str_)
-    str_ = "a" * 161
-    log.info(str_)
-    log.debug(str_)
-    del_zero(5)
-    log.debug("", o=BIRDS)
-    log.critical("Это катастрофа, парень шел к успеху, но не фартнуло...(")
-    log.trace("Сообщение уровня TRACE: 5", o=obj)
+    log.trace("Сообщение уровня TRACE: 5")
+    log.debug("Сообщение уровня DEBUG: 10")
     log.info("Сообщение уровня INFO: 20")
+    log.success("Сообщение уровня SUCCESS: 25")
+    log.warning("Сообщение уровня WARNING: 30")
+    log.error("Сообщение уровня ERROR: 40; " * 10)
+    log.critical(
+        "Это катастрофа, парень шел к успеху, но не фартануло..:-(\nСообщение уровня CRITICAL: 50"
+    )
+    log.debug("Объект птички", o=BIRDS)
+    log.info("Словарь", o=obj)
+    # return
+    log.success("SUCCESS " * 20)
+    del_zero(5)
+    log.debug("=" * 70)

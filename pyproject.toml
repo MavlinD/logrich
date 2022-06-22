@@ -1,9 +1,11 @@
 [tool.poetry]
-name = "logger"
+name = "logger_mdv"
 version = "0.1.0"
 description = "loguru + rich = nice logger"
 authors = ["Dmitry Mavlin <mavlind@list.ru>"]
 license = "GPL"
+readme = "README.md"
+keywords = ["logger", "loguru", "rich"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -22,6 +24,10 @@ black = "^22.1.0"
 pylint = "^2.12.2"
 mypy = "^0.961"
 pre-commit = "^2.19.0"
+
+# [tool.poetry.scripts]
+# logger = 'logger:main'
+# script_name = '{package_name}:{function_name}'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

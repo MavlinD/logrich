@@ -4,8 +4,8 @@ import sys
 import loguru
 from loguru import logger
 
-from logger.logger_assets import print_tbl, format_extra_obj
-from logger.config import config
+from logger_mdv.logger_assets import print_tbl, format_extra_obj
+from logger_mdv.config import config
 
 # https://flaviocopes.com/rgb-color-codes/
 # https://loguru.readthedocs.io/en/stable/api/logger.html#message
@@ -16,13 +16,13 @@ from logger.config import config
 # https://encycolorpedia.ru/30d5c8 - colors
 
 """
-    TRACE	    5	logger.trace()
-    DEBUG	    10	logger.debug()
-    INFO	    20	logger.info()
-    SUCCESS	    25	logger.success()
-    WARNING	    30	logger.warning()
-    ERROR	    40	logger.error()
-    CRITICAL	50	logger.critical()
+    TRACE	    5	logger_mdv.trace()
+    DEBUG	    10	logger_mdv.debug()
+    INFO	    20	logger_mdv.info()
+    SUCCESS	    25	logger_mdv.success()
+    WARNING	    30	logger_mdv.warning()
+    ERROR	    40	logger_mdv.error()
+    CRITICAL	50	logger_mdv.critical()
 """
 
 
