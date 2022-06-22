@@ -45,14 +45,8 @@ theme = Theme(
     {
         "repr.brace": "bold black",
         "repr.str": "green",
-        # "repr.str": "dim bold blue",
-        # "repr.call": "dim bold blue",
         "repr.attrib_name": "#0099ff",
         "repr.equal": "red dim",
-        # "repr.attrib_name": "#00ff00",
-        # "repr.attrib_value": "dim bold red",
-        # "repr.bool_true": "dim bold blue",
-        # "repr.tag_start": "dim bold blue",
         "repr.digit": color_of_digit,
         "repr.digit2": color_of_digit,
         "repr.colon": "#D2691E",
@@ -63,49 +57,26 @@ theme = Theme(
         "repr.none": "blue",
         "repr.bool_false": "yellow",
         "repr.class_name": "magenta bold",
-        # "repr.value": "dim bold blue",
-        # "repr.value": "green",
         "repr.string_list_tuple": "green",
-        "trace": "reverse #0b66de",
         "trace_msg": "#05a7f7",
-        "debug": "#182D0B on #9F2844",
-        # "debug": "reverse #7B3F00",
         "debug_msg": "#e64d00",
-        "info": "reverse blue",
         "info_msg": "#33ccff",
-        "success": "reverse green",
         "success_msg": "green",
-        "warning": "reverse yellow",
         "warning_msg": "yellow",
-        "foobar": "reverse yellow",
-        "foobar_msg": "yellow",
-        "error": "red bold reverse",
-        # "error": "reverse #b00bde",
         "error_msg": "#b00bde",
-        "critical": "reverse #de0b2e",
         "critical_msg": "#de0b2e",
     }
 )
 
 theme_fmt = {
     "trace": "reverse #0b66de",
-    "trace_msg": "#05a7f7",
     "debug": "#182D0B on #9F2844",
-    # "debug": "reverse #7B3F00",
-    "debug_msg": "#e64d00",
     "info": "reverse blue",
-    "info_msg": "#33ccff",
     "success": "reverse green",
-    "success_msg": "green",
     "warning": "reverse yellow",
-    "warning_msg": "yellow",
     "foobar": "reverse yellow",
-    "foobar_msg": "yellow",
     "error": "red bold reverse",
-    # "error": "reverse #b00bde",
-    "error_msg": "#b00bde",
     "critical": "reverse #de0b2e",
-    "critical_msg": "#de0b2e",
 }
 
 # инстанс консоли rich
@@ -117,6 +88,24 @@ console_dict = Console(
     log_path=False,
     safe_box=True,
 )
+
+
+def print_message_for_table(message: Any) -> str:
+    # инстанс консоли rich
+    console2 = Console(
+        no_color=True,
+        markup=False,
+        safe_box=True,
+        highlight=False,
+    )
+
+    with console2.capture() as capture:
+        console2.print(
+            message,
+            markup=False,
+            width=80,
+        )
+    return capture.get()
 
 
 def print_tbl(
@@ -149,29 +138,12 @@ def print_tbl(
 
     table.add_row(
         f"[{theme_fmt.get(style)}] {level:<9}[/]",
+        # f"{print_message_for_table(message)}",
         f"{message}",
         f"[#858585]{file}...[/][#eb4034]{line}[/]",
     )
     with console.capture() as capture:
         console_dict.print(table, markup=True)
-    return capture.get()
-
-
-def print_message_for_table(message: Any) -> str:
-    # инстанс консоли rich
-    console2 = Console(
-        no_color=True,
-        markup=False,
-        safe_box=True,
-        highlight=False,
-    )
-
-    with console2.capture() as capture:
-        console2.print(
-            message,
-            markup=False,
-            width=80,
-        )
     return capture.get()
 
 

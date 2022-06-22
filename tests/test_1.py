@@ -1,9 +1,7 @@
 from pprint import pprint
-
 import pytest
 
-from logger.logger_ import errlog
-from logger.logger_ import log
+from logger.logger_ import errlog, log
 
 
 # @errlog.catch
@@ -60,20 +58,18 @@ BIRDS = {
 
 
 def test_too():
-    i = 496
+    i = 5
 
     log.debug("obj")
-
-    log.debug(obj)
-    log.warning("obj")
-    # return
     log.trace("tst-obj", o=obj)
+    # return
+    log.warning("obj")
     log.error("err " * 100)
-    log.critical(BIRDS)
+    log.critical("птички", o=BIRDS)
     log.debug("===============++")
     # return
     log.debug("+++++9", o=obj)
-    log.debug(obj)
+    log.debug("test", obj)
     log.success("m" * 16)
     log.debug("a" * 160)
     str_ = "у " * 61
@@ -81,7 +77,7 @@ def test_too():
     str_ = "a" * 161
     log.info(str_)
     log.debug(str_)
-    log.debug("", o=BIRDS)
     del_zero(5)
+    log.debug("", o=BIRDS)
     log.critical("Ой вэй, всё пропало!")
     log.info("46464")

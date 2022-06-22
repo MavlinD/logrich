@@ -1,5 +1,6 @@
 from __future__ import annotations
 import sys
+
 import loguru
 from loguru import logger
 
@@ -83,53 +84,5 @@ logger.add(
     catch=True,
 )
 
-
 errlog = logger.opt(colors=True, exception=True).bind(name="err")
-log_ = logger.opt(lazy=False, colors=True).bind(name="all")
-
-
-def print_log(level: str, *args, **kwargs) -> None:
-    """Helper for print records"""
-    if isinstance(args[0], dict):
-        return getattr(log_, level)("", o=args[0])
-    obj = kwargs.get("o")
-
-    if obj:
-        return getattr(log_, level)(args[0], o=obj)
-
-    return getattr(log_, level)(args[0])
-
-
-class Logger:
-    """Обёртка над loguru"""
-
-    @staticmethod
-    def debug(*args, **kwargs) -> None:
-        print_log("debug", *args, **kwargs)
-
-    @staticmethod
-    def trace(*args, **kwargs) -> None:
-        print_log("trace", *args, **kwargs)
-
-    @staticmethod
-    def info(*args, **kwargs) -> None:
-        print_log("info", *args, **kwargs)
-
-    @staticmethod
-    def warning(*args, **kwargs) -> None:
-        print_log("warning", *args, **kwargs)
-
-    @staticmethod
-    def success(*args, **kwargs) -> None:
-        print_log("success", *args, **kwargs)
-
-    @staticmethod
-    def error(*args, **kwargs) -> None:
-        print_log("error", *args, **kwargs)
-
-    @staticmethod
-    def critical(*args, **kwargs) -> None:
-        print_log("critical", *args, **kwargs)
-
-
-log = Logger()
+log = logger.opt(lazy=False, colors=True).bind(name="all")
