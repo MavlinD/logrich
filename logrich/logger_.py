@@ -4,8 +4,8 @@ import sys
 import loguru
 from loguru import logger
 
-from nice_logger.logger_assets import print_tbl, format_extra_obj
-from nice_logger.config import config
+from logrich.logger_assets import print_tbl, format_extra_obj
+from logrich.config import config
 
 # https://flaviocopes.com/rgb-color-codes/
 # https://loguru.readthedocs.io/en/stable/api/logger.html#message
@@ -16,13 +16,13 @@ from nice_logger.config import config
 # https://encycolorpedia.ru/30d5c8 - colors
 
 """
-    TRACE	    5	nice_logger.trace()
-    DEBUG	    10	nice_logger.debug()
-    INFO	    20	nice_logger.info()
-    SUCCESS	    25	nice_logger.success()
-    WARNING	    30	nice_logger.warning()
-    ERROR	    40	nice_logger.error()
-    CRITICAL	50	nice_logger.critical()
+    TRACE	    5	logrich.trace()
+    DEBUG	    10	logrich.debug()
+    INFO	    20	logrich.info()
+    SUCCESS	    25	logrich.success()
+    WARNING	    30	logrich.warning()
+    ERROR	    40	logrich.error()
+    CRITICAL	50	logrich.critical()
 """
 
 

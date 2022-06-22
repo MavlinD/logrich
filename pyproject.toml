@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "nice-logger"
+name = "logrich"
 version = "0.1.7"
-description = "loguru + rich = nice logger"
+description = "loguru + rich = logrich"
 authors = ["Dmitry Mavlin <mavlind@list.ru>"]
 license = "GPL"
 readme = "README.md"

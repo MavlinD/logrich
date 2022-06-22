@@ -15,7 +15,7 @@
 
 ```shell
 git clone 
-cd nice_logger
+cd logrich
 poetry shell
 poetry install
 ```

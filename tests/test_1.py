@@ -1,7 +1,7 @@
 from pprint import pprint
 import pytest
 
-from nice_logger.logger_ import errlog, log
+from logrich.logger_ import errlog, log
 
 
 # @errlog.catch

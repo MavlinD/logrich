@@ -11,12 +11,12 @@ from _pytest.logging import LogCaptureFixture
 import pytest
 import logging
 
-from nice_logger.logger_assets import console
-from nice_logger.config import config as config_
+from logrich.logger_assets import console
+from logrich.config import config as config_
 
 
 def pytest_addoption(parser: Parser) -> None:
-    """Add a command line option to disable nice_logger."""
+    """Add a command line option to disable logrich."""
     parser.addoption("--log-disable", action="append", default=[], help="disable specific loggers")
     parser.addoption("--cmdopt", action="store", default="type1", help="my option: type1 or type2")
 

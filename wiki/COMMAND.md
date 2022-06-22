@@ -19,7 +19,7 @@ PYPI Production
 ```shell
 # get token from https://pypi.org/manage/account/token/
 # store token using poetry
-poetry config pypi-token.pypi pypi-XXXXXXXX
+poetry config pypi-token.pypi $PYPI_TOKEN_PYPI
 ```
 
 Bump version
