@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "logger_mdv"
-version = "0.1.0"
+version = "0.1.1"
 description = "loguru + rich = nice logger"
 authors = ["Dmitry Mavlin <mavlind@list.ru>"]
 license = "GPL"

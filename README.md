@@ -2,7 +2,7 @@
 
 ####Совместная работа [loguru](https://loguru.readthedocs.io) & [rich](https://rich.readthedocs.io).
 
-![Screenshot logger](wiki/screenshot_logger.png "Screenshot")
+![Screenshot logger](wiki/screenshot_logger.png?raw=True)
 
 Уровень вывода исключений определяется в переменных окружения.
 Цвета, ширины и шаблоны вывода также могут быть определены в окружении.
