@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import datetime
 from typing import Any
 
 import loguru
@@ -109,7 +111,11 @@ def print_message_for_table(message: Any) -> str:
 
 
 def print_tbl(
-    level: loguru.RecordLevel, message: str, file: loguru.RecordFile, line: int, style: str
+    level: loguru.RecordLevel,
+    message: str,
+    file: loguru.RecordFile,
+    line: int,
+    style: str,
 ) -> str:
     """Форматирует вывод логгера в табличном виде"""
     table = Table(
@@ -126,7 +132,7 @@ def print_tbl(
     # LEVEL
     table.add_column(
         justify="left",
-        min_width=config.MIN_WIDTH,
+        min_width=config.MIN_WIDTH_COMPUTED,
         max_width=config.MAX_WIDTH,
     )
     # MESSAGE
@@ -135,10 +141,12 @@ def print_tbl(
     table.add_column(justify="right", ratio=config.RATIO_FROM, overflow="fold")
     # LINE
     table.add_column(ratio=2, overflow="crop")  # для паддинга справа
-
+    record_time = ""
+    if config.LOGURU_DATETIME_SHOW:
+        time_ = datetime.datetime.now()
+        record_time = f"\n[#00FA9A r not b] {time_.strftime(config.LOGURU_DATETIME_FORMAT)} [/]"
     table.add_row(
-        f"[{theme_fmt.get(style)}] {level:<9}[/]",
-        # f"{print_message_for_table(message)}",
+        f"[{theme_fmt.get(style)}] {level:<9}[/]{record_time}",
         f"{message}",
         f"[#858585]{file}...[/][#eb4034]{line}[/]",
     )

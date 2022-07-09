@@ -21,7 +21,15 @@ class Settings(BaseSettings):
     # https://rich.readthedocs.io/en/stable/style.html
 
     LOGURU_EXCEPTION_FORMAT_LONG: str = "{extra[msg]}\n{exception}\n"
+    LOGURU_DATETIME_FORMAT: str = "%b-%d %H:%M"
+    LOGURU_DATETIME_SHOW: bool = False
     LOGURU_DIAGNOSE: str = "NO"
+
+    @property
+    def MIN_WIDTH_COMPUTED(cls):
+        if cls.LOGURU_DATETIME_SHOW:
+            return cls.MIN_WIDTH + 3
+        return cls.MIN_WIDTH
 
     MIN_WIDTH: int = 12
     MAX_WIDTH: int = 15

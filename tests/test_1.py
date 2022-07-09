@@ -1,6 +1,3 @@
-from pprint import pprint
-import pytest
-
 from logrich.logger_ import errlog, log
 
 
@@ -10,17 +7,9 @@ def del_zero(arg):
     return arg / 0
 
 
-def del_zero2(arg):
-    try:
-        pprint(arg)
-        return arg / 0
-    except Exception as err:
-        ...
-
-
 obj = {
     "name": "Имя, фамилия " * 5,
-    "slug": 753951,
+    "slug": 759933327936516,
     "slug1": 1,
     "slug2": 51,
     "slug-test": 198,
@@ -69,6 +58,6 @@ def test_too():
     log.debug("Объект птички", o=BIRDS)
     log.info("Словарь", o=obj)
     # return
-    log.success("SUCCESS " * 20)
+    log.success("SUCCESS [#FF1493]SUCCESS[/] [#00FFFF]SUCCESS[/] " * 10)
     del_zero(5)
     log.debug("=" * 70)
