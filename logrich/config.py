@@ -1,6 +1,6 @@
-from pydantic import BaseSettings
+import os
 
-DOTENV_FILE = "./.env"
+from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -8,11 +8,7 @@ class Settings(BaseSettings):
     Server config settings
     """
 
-    class Config:
-        env_file = DOTENV_FILE
-        env_file_encoding = "utf-8"
-
-    LOG_LEVEL: int = 0
+    LOG_LEVEL: int = 5
     # макисмальная длина текста чтобы разместить его на одной линии с уровнем лога
     MAX_WITH_LOG_OF_OBJ: int = 120
     # https://loguru.readthedocs.io/en/stable/resources/recipes.html#adapting-colors-and-format-of-logged-messages-dynamically
@@ -37,4 +33,4 @@ class Settings(BaseSettings):
     RATIO_FROM: int = 40
 
 
-config = Settings()
+config = Settings(_env_file=os.getenv("_env_file", default="./.env"))
