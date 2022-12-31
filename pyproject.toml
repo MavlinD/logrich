@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "logrich"
-version = "0.3.0"
+version = "0.3.4"
 description = "loguru + rich = logrich"
 authors = ["Dmitry Mavlin <mavlind@list.ru>"]
 license = "GPL"
@@ -12,12 +12,13 @@ keywords = ["logger", "loguru", "rich"]
 "Bug Tracker" = "https://gitlab.com/mavlin74/logrich/issues"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.7"
 toml = "0.10.2"
 watchdog = "2.0.3"
 loguru = "^0.6.0"
 rich = "^12.4.4"
 pydantic = {extras = ["dotenv"], version = "^1.9.1"}
+importlib-metadata = "^5.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.4"
