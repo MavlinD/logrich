@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "logrich"
-version = "0.3.4"
+version = "0.7.0"
 description = "loguru + rich = logrich"
 authors = ["Dmitry Mavlin <mavlind@list.ru>"]
 license = "GPL"
@@ -14,7 +14,7 @@ keywords = ["logger", "loguru", "rich"]
 [tool.poetry.dependencies]
 python = "^3.7"
 toml = "0.10.2"
-watchdog = "2.0.3"
+watchdog = "^2.3.1"
 loguru = "^0.6.0"
 rich = "^12.4.4"
 pydantic = {extras = ["dotenv"], version = "^1.9.1"}
