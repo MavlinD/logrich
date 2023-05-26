@@ -2,6 +2,7 @@
 # публикация пакета
 ptv patch && poetry build && poetry publish -r test-pypi
 ptv patch && poetry build && poetry publish -r pypi
+ptv patch && poetry build
 ```
 
 PYPI test

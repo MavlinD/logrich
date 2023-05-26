@@ -1,4 +1,6 @@
-from logrich import errlog, log
+from rich.style import Style
+
+from logrich import errlog, log, console
 
 
 # @errlog.catch
@@ -61,6 +63,10 @@ def test_one():
     log.success("SUCCESS [#FF1493]SUCCESS[/] [#00FFFF]SUCCESS[/] " * 10)
     del_zero(5)
     log.debug("=" * 70)
+
+    title = "Это Спарта!"
+    console.rule(f"[green]{title}[/]", style=Style(color="magenta"))
+
     num_dict = {1: {2: {2: 111}, 3: {3: 111}}, 2: {3: {3: 111}}, 3: {2: {2: 111}, 3: {3: 111}}}
     log.debug("неверно раскрашивает первые числа", o=num_dict)
     num_dict = {
