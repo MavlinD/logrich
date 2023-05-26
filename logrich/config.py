@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     Server config settings
     """
 
-    LOG_LEVEL: int = 5
+    LOG_LEVEL: int | str = 5
     # макисмальная длина текста чтобы разместить его на одной линии с уровнем лога
     MAX_WITH_LOG_OF_OBJ: int = 120
     # https://loguru.readthedocs.io/en/stable/resources/recipes.html#adapting-colors-and-format-of-logged-messages-dynamically

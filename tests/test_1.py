@@ -1,4 +1,4 @@
-from logrich.logger_ import errlog, log
+from logrich import errlog, log
 
 
 # @errlog.catch
@@ -9,7 +9,7 @@ def del_zero(arg):
 
 obj = {
     "name": "Имя, фамилия " * 5,
-    "slug": 759933327936516,
+    "slug": 7599333279365,
     "slug1": 1,
     "slug2": 51,
     "slug-test": 198,
