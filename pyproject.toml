@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "logrich"
-version = "0.7.2"
+version = "0.7.4"
 description = "loguru + rich = logrich"
 authors = ["Dmitry Mavlin <mavlind@list.ru>"]
 license = "GPL"

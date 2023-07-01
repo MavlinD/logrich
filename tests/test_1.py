@@ -1,6 +1,11 @@
+import pytest
 from rich.style import Style
 
 from logrich import errlog, log, console
+
+TEST = "[reverse grey70] TEST     [/]"
+log.level(TEST, no=15)
+log.test = lambda msg: log.log(TEST, msg)  # type: ignore
 
 
 # @errlog.catch
@@ -22,7 +27,7 @@ obj = {
     "score": 123456,
     "elapsed_time": "0.060 seconds",
     "version": "2.14.3",
-    "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjUzNTUwMTY1LCJqdGkiOiJmNzFhYjg5OWE5MDY0Y2EwODgwMzY1NzQ1NjYwNzdjOSIsInVzZXJfaWQiOjF9.KES3fhmBTXy8AwDSJTseNsLFC3xSh1J_slndgmSwp08",
+    "access": "eyJ0eXAiiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjUzNTUwMTY1LCJqdGkiOiJmNzFhYjg5OWE5MDY0Y2EwODgwMzY1NzQ1NjYwNzdjOSIsInVzZXJfaWQiOjF9.KES3fhmBTXy8AwDSJTseNsLFC3xSh1J_slndgmSwp08",
     "id": 1234561,
 }
 
@@ -47,6 +52,7 @@ BIRDS = {
 }
 
 
+# @pytest.mark.skip
 def test_one():
     log.trace("Сообщение уровня TRACE: 5")
     log.debug("Сообщение уровня DEBUG: 10")
@@ -75,3 +81,23 @@ def test_one():
         3: {2: {2: "здесь будут стили"}, 3: {3: "здесь будут стили"}},
     }
     log.debug("неверно раскрашивает первые двойки", o=num_dict)
+
+    context = {"clientip": "192.168.0.1", "user": "fbloggs"}
+
+    # logger.info("Protocol problem", extra=context)  # Standard logging
+    # logger.bind(**context).info("Protocol problem")  # Loguru
+
+
+def test_too():
+    log.log("INFO", "test-")
+    # TEST = log.level("TEST")
+    # TST = "<red>TST"
+    # TST = "TST"
+    # TST = "[reverse gray70] TST      [/]"
+    # TST = "[reverse yellow] TST      [/]"
+    # log.level(TST, no=15)
+    # log.level(TST, no=15, style="red")
+    # log.log(TST, "Тестовый лог")
+    # log.tst = lambda msg: log.log(TST, msg)
+    log.test("Тестовый лог")
+    # log.log(TEST, "test-2")

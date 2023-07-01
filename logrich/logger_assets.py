@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import datetime
+import re
 from typing import Any
 
 import loguru
 
 from rich.highlighter import ReprHighlighter, _combine_regex as combine_regex
+from rich.pretty import pprint  # noqa
 from rich.theme import Theme
 from rich.table import Table
 from rich.console import Console
@@ -129,6 +131,17 @@ def print_tbl(
         expand=True,
         box=None,
     )
+    record_time = ""
+    if config.LOGURU_DATETIME_SHOW:
+        time_ = datetime.datetime.now()
+        record_time = f"\n[#00FA9A r not b] {time_.strftime(config.LOGURU_DATETIME_FORMAT)} [/]"
+    if level.name.lower() in theme_fmt.keys():
+        theme_lvl = theme_fmt.get(style, "")
+        stamp = f"[{theme_lvl}] {level:<9}[/]{record_time}"
+        style = f"{level.name.lower()}_msg"
+    else:
+        style = re.match(r"^\[(.*)\].", level.name).groups()[0].replace("reverse", "")  # type: ignore
+        stamp = f"{level:<9}{record_time}"
     # LEVEL
     table.add_column(
         justify="left",
@@ -136,20 +149,15 @@ def print_tbl(
         max_width=config.MAX_WIDTH,
     )
     # MESSAGE
-    table.add_column(ratio=config.RATIO_MAIN, overflow="fold", style=f"{level.name.lower()}_msg")
+    table.add_column(ratio=config.RATIO_MAIN, overflow="fold", style=style)
     # FILE
     table.add_column(justify="right", ratio=config.RATIO_FROM, overflow="fold")
     # LINE
     table.add_column(ratio=2, overflow="crop")  # для паддинга справа
-    record_time = ""
-    if config.LOGURU_DATETIME_SHOW:
-        time_ = datetime.datetime.now()
-        record_time = f"\n[#00FA9A r not b] {time_.strftime(config.LOGURU_DATETIME_FORMAT)} [/]"
-    table.add_row(
-        f"[{theme_fmt.get(style)}] {level:<9}[/]{record_time}",
-        f"{message}",
-        f"[#858585]{file}...[/][#eb4034]{line}[/]",
-    )
+    msg = f"{message}"
+    file_info = f"[#858585]{file}...[/][#eb4034]{line}[/]"
+
+    table.add_row(stamp, msg, file_info)
     with console.capture() as capture:
         console_dict.print(table, markup=True)
     return capture.get()
