@@ -7,7 +7,7 @@ from logrich.app import console
 obj = {
     "name": "Имя, фамилия " * 5,
     "slug": 759933327936,
-    "slug1": 1,
+    "slug1": 13,
     "slug2": 51,
     "slug-test": 198,
     "slug3": 951,
@@ -88,4 +88,5 @@ def test_too():
     # log.log(TST, "Тестовый лог")
     # log.tst = lambda msg: log.log(TST, msg)
     log.test("Тестовый лог")
+    log.start("Тестовый лог")
     # log.log(TEST, "test-2")

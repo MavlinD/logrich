@@ -2,10 +2,10 @@ import decimal
 import inspect
 import re
 from collections import deque
-from functools import lru_cache
 from types import FrameType
-from typing import Any
+from typing import Any, Deque
 
+from memoization import cached
 from rich.console import Console
 from rich.highlighter import ReprHighlighter
 from rich.pretty import pprint  # noqa
@@ -93,12 +93,13 @@ console_dict = Console(
 )
 
 
-@lru_cache
+@cached
 class Log:
     """Extension log, use in tests."""
 
-    def __init__(self, **kwargs):
-        self.deque = deque()
+    def __init__(self, config: dict, **kwargs):
+        self.deque: Deque = deque()
+        self.config = config
         for k, v in kwargs.items():
             self.__setattr__(k, v)
 
@@ -213,19 +214,12 @@ class Log:
         console_dict.print(table, markup=True)
 
 
-class HashableDict(dict):  # noqa WPS600
-    """Add hash object."""
-
-    def __hash__(self):
-        return id(self)
-
-
 log = Log(
+    config=config.dict(),
     dev_style="blue",
     run_style="cyan",
     end_style="cyan",
     start_style="cyan",
     trace_style="turquoise2",
     debug_style="dark_orange3",
-    config=HashableDict(config),
 )

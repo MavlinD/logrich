@@ -1,12 +1,16 @@
+from dotenv import load_dotenv
+from memoization import cached
 from pydantic import BaseSettings
 
+load_dotenv()
 
+
+@cached
 class Settings(BaseSettings):
     """
     Server config settings
     """
 
-    DUMP_ARGS: bool = False
     COLUMNS: int = 110
     # https://rich.readthedocs.io/en/stable/appendix/colors.html
     LOG_LEVEL_ELAPCE_TPL: str = "[reverse turquoise2] ELAPCE [/]"
