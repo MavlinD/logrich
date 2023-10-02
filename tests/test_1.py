@@ -1,22 +1,12 @@
 import pytest
 from rich.style import Style
 
-from logrich import errlog, log, console
-
-TEST = "[reverse grey70] TEST     [/]"
-log.level(TEST, no=15)
-log.test = lambda msg: log.log(TEST, msg)  # type: ignore
-
-
-# @errlog.catch
-@errlog.catch(message="Because we never know...O_o.\nДемонстрация вывода исключений.")
-def del_zero(arg):
-    return arg / 0
-
+from logrich import log
+from logrich.app import console
 
 obj = {
     "name": "Имя, фамилия " * 5,
-    "slug": 7599333279365,
+    "slug": 759933327936,
     "slug1": 1,
     "slug2": 51,
     "slug-test": 198,
@@ -60,27 +50,26 @@ def test_one():
     log.success("Сообщение уровня SUCCESS: 25")
     log.warning("Сообщение уровня WARNING: 30")
     log.error("Сообщение уровня ERROR: 40; " * 10)
-    log.critical(
+    log.fatal(
         "Это катастрофа, парень шел к успеху, но не фартануло..:-(\nСообщение уровня CRITICAL: 50"
     )
-    log.debug("Объект птички", o=BIRDS)
-    log.info("Словарь", o=obj)
+    log.debug(BIRDS, title="Объект птички")
+    log.info(obj, title="Словарь")
     # return
     log.success("SUCCESS [#FF1493]SUCCESS[/] [#00FFFF]SUCCESS[/] " * 10)
-    del_zero(5)
     log.debug("=" * 70)
 
     title = "Это Спарта!"
     console.rule(f"[green]{title}[/]", style=Style(color="magenta"))
 
     num_dict = {1: {2: {2: 111}, 3: {3: 111}}, 2: {3: {3: 111}}, 3: {2: {2: 111}, 3: {3: 111}}}
-    log.debug("неверно раскрашивает первые числа", o=num_dict)
+    log.debug(num_dict, title="неверно раскрашивает первые числа")
     num_dict = {
         1: {2: {2: "здесь будут стили"}, 3: {3: "здесь будут стили"}},
         2: {3: {3: "здесь будут стили"}},
         3: {2: {2: "здесь будут стили"}, 3: {3: "здесь будут стили"}},
     }
-    log.debug("неверно раскрашивает первые двойки", o=num_dict)
+    log.debug(num_dict, title="неверно раскрашивает первые двойки")
 
     context = {"clientip": "192.168.0.1", "user": "fbloggs"}
 
@@ -89,7 +78,6 @@ def test_one():
 
 
 def test_too():
-    log.log("INFO", "test-")
     # TEST = log.level("TEST")
     # TST = "<red>TST"
     # TST = "TST"

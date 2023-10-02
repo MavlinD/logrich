@@ -1,18 +1,13 @@
-import sys
 from typing import Generator
 
 from _pytest import nodes
 from _pytest.config import Config
 from _pytest.config.argparsing import Parser
 
-from loguru import logger
-from _pytest.logging import LogCaptureFixture
 
 import pytest
 import logging
-
-from logrich.logger_assets import console
-from logrich.config import config as config_
+from logrich.app import console
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -39,18 +34,3 @@ def run_before_and_after_tests(tmpdir) -> Generator:
     # https://localcoder.org/run-code-before-and-after-each-test-in-py-test
     print()
     yield
-
-
-@pytest.fixture
-def caplog(caplog: LogCaptureFixture) -> Generator:
-    # https://loguru.readthedocs.io/en/stable/resources/migration.html#making-things-work-with-pytest-and-caplog
-    # https://florian-dahlitz.de/articles/logging-made-easy-with-loguru#wait-there-is-more
-    logger.remove()
-    handler_id = logger.add(
-        sys.stdout,
-        level=config_.LOG_LEVEL,
-        format=config_.LOGURU_EXCEPTION_FORMAT_LONG,
-        backtrace=False,
-    )
-    yield caplog
-    logger.remove(handler_id)

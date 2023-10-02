@@ -1,2 +1,1 @@
-from .app import errlog, log
-from .logger_assets import console
+from .app import log

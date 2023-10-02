@@ -1,6 +1,3 @@
-import os
-from typing import Union
-
 from pydantic import BaseSettings
 
 
@@ -9,29 +6,31 @@ class Settings(BaseSettings):
     Server config settings
     """
 
-    LOG_LEVEL: Union[int, str] = 5
-    # макисмальная длина текста чтобы разместить его на одной линии с уровнем лога
-    MAX_WITH_LOG_OF_OBJ: int = 120
-    # https://loguru.readthedocs.io/en/stable/resources/recipes.html#adapting-colors-and-format-of-logged-messages-dynamically
-    # https://docs-python.ru/standart-library/modul-string-python/klass-template-modulja-string/
-    # https://loguru.readthedocs.io/en/stable/api/logger.html#color
-    # https://rich.readthedocs.io/en/stable/style.html
+    DUMP_ARGS: bool = False
+    COLUMNS: int = 110
+    # https://rich.readthedocs.io/en/stable/appendix/colors.html
+    LOG_LEVEL_ELAPCE_TPL: str = "[reverse turquoise2] ELAPCE [/]"
 
-    LOGURU_EXCEPTION_FORMAT_LONG: str = "{extra[msg]}\n{exception}\n"
-    LOGURU_DATETIME_FORMAT: str = "%b-%d %H:%M"
-    LOGURU_DATETIME_SHOW: bool = False
-    LOGURU_DIAGNOSE: str = "NO"
+    LOG_LEVEL_START_TPL: str = "[reverse i aquamarine1] START  [/]"
+    LOG_LEVEL_END_TPL: str = "[reverse i green4] END    [/reverse i green4]"
 
-    @property
-    def MIN_WIDTH_COMPUTED(cls):
-        if cls.LOGURU_DATETIME_SHOW:
-            return cls.MIN_WIDTH + 3
-        return cls.MIN_WIDTH
+    LOG_LEVEL_TEST_TPL: str = "[reverse grey70] TEST   [/]"
+    LOG_LEVEL_DATA_TPL: str = "[reverse cornflower_blue] DATA   [/]"
+    LOG_LEVEL_DEV_TPL: str = "[reverse grey70] DEV    [/]"
+    LOG_LEVEL_INFO_TPL: str = "[reverse blue] INFO   [/]"
+    LOG_LEVEL_TRACE_TPL: str = "[reverse dodger_blue2] TRACE  [/]"
+    LOG_LEVEL_RUN_TPL: str = "[reverse yellow] RUN    [/]"
+    LOG_LEVEL_GO_TPL: str = "[reverse royal_blue1] GO     [/]"
+    LOG_LEVEL_LIST_TPL: str = "[reverse wheat4] LIST   [/]"
+    LOG_LEVEL_DEBUG_TPL: str = "[reverse #9f2844] DEBUG  [/]"
+    LOG_LEVEL_SUCCESS_TPL: str = "[reverse green] SUCCS  [/]"
+    LOG_LEVEL_LOG_TPL: str = "[reverse chartreuse4] LOG    [/]"
+    LOG_LEVEL_TIME_TPL: str = "[reverse spring_green4] TIME   [/]"
+    LOG_LEVEL_WARN_TPL: str = "[reverse bright_red] WARN   [/]"
+    LOG_LEVEL_WARNING_TPL: str = "[reverse bright_red] WARN   [/]"
+    LOG_LEVEL_FATAL_TPL: str = "[reverse bright_red] FATAL  [/]"
+    LOG_LEVEL_ERR_TPL: str = "[reverse #ff5252] ERR    [/]"
+    LOG_LEVEL_ERROR_TPL: str = "[reverse #ff5252] ERROR  [/]"
 
-    MIN_WIDTH: int = 12
-    MAX_WIDTH: int = 15
-    RATIO_MAIN: int = 80
-    RATIO_FROM: int = 40
 
-
-config = Settings(_env_file=os.getenv("_env_file", default="./.env"))
+config = Settings()
