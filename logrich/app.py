@@ -215,7 +215,7 @@ class Log:
 
 
 log = Log(
-    config=config.dict(),
+    config=config,
     dev_style="blue",
     run_style="cyan",
     end_style="cyan",
