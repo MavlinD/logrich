@@ -107,30 +107,43 @@ class Log:
         """Extension log."""
         if not (level := self.deque.pop()):  # noqa WPS332
             return
+
         frame = frame or inspect.currentframe().f_back  # type: ignore
         file_name = kwargs.get("file_name", frame.f_code.co_filename)[-30:]  # type: ignore
         line = kwargs.get("line", frame.f_lineno)  # type: ignore
         title = kwargs.get("title", "---")
 
-        if isinstance(msg, (str, int, float, bool, type(decimal), type(None))):
-            self.print_tbl(message=msg, file=file_name, line=line, level=level)
-        elif isinstance(msg, (dict, tuple, list)):
-            # TODO add message for dict, tuple etc.
-            self.print_tbl(message=title, file=file_name, line=line, level=level)
-            self.format_extra_obj(message=msg)
-        else:
-            self.print_tbl(message=msg, file=file_name, line=frame.f_lineno, level=level)
+        level_key = f"LOG_LEVEL_{level.upper()}_TPL"
+        level_style = self.config.get(level_key, "")
+        if level_style:
+            if isinstance(msg, (str, int, float, bool, type(decimal), type(None))):
+                self.print_tbl(
+                    message=msg, file=file_name, line=line, level=level, level_style=level_style
+                )
+            elif isinstance(msg, (dict, tuple, list)):
+                # TODO add message for dict, tuple etc.
+                self.print_tbl(
+                    message=title, file=file_name, line=line, level=level, level_style=level_style
+                )
+                self.format_extra_obj(message=msg)
+            else:
+                self.print_tbl(
+                    message=msg,
+                    file=file_name,
+                    line=frame.f_lineno,
+                    level=level,
+                    level_style=level_style,
+                )
 
     def print_tbl(
         self,
+        level_style: str,
         level: str,
         file: str,
         line: int,
         message: str = "",
     ) -> str:
         """Форматирует вывод логгера в табличном виде"""
-        level_key = f"LOG_LEVEL_{level.upper()}_TPL"
-        level_style = self.config.get(level_key, "").strip('"')
         table = Table(
             highlight=True,
             show_header=False,

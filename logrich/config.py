@@ -1,5 +1,8 @@
-from dotenv import dotenv_values
+import os
 
+from dotenv import load_dotenv
+
+load_dotenv(".env")
 
 config = dict(
     COLUMNS=110,  # type: ignore
@@ -27,5 +30,5 @@ config = dict(
 )
 
 config.update(
-    **dotenv_values(),
+    **os.environ,  # override loaded values with environment variables
 )

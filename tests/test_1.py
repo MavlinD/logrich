@@ -89,4 +89,5 @@ def test_too():
     # log.tst = lambda msg: log.log(TST, msg)
     log.test("Тестовый лог")
     log.start("Тестовый лог")
+    log.pprint("Тестовый лог")
     # log.log(TEST, "test-2")
