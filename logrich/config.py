@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 load_dotenv(".env")
 
 config = dict(
+    # ширина вывода имени файла
+    RATIO_FILE_NAME=50,
     COLUMNS=110,  # type: ignore
     # https://rich.readthedocs.io/en/stable/appendix/colors.html
     LOG_LEVEL_ELAPCE_TPL="[reverse turquoise2] ELAPCE [/]",

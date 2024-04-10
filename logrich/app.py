@@ -2,10 +2,10 @@ import decimal
 import inspect
 import re
 from collections import deque
-from types import FrameType
+from datetime import datetime
+from functools import lru_cache
 from typing import Any, Deque
 
-from memoization import cached
 from rich.console import Console
 from rich.highlighter import ReprHighlighter
 from rich.pretty import pprint  # noqa
@@ -93,7 +93,7 @@ console_dict = Console(
 )
 
 
-@cached
+@lru_cache
 class Log:
     """Extension log, use in tests."""
 
@@ -103,27 +103,46 @@ class Log:
         for k, v in kwargs.items():
             self.__setattr__(k, v)
 
-    def print(self, msg: str, frame: FrameType | None = None, **kwargs) -> None:
+    def print(
+        self,
+        # вызов логгера без параметров выведет текущую дату
+        msg: str | datetime = datetime.now().strftime("%H:%M:%S"),
+        frame=None,
+        **kwargs,
+    ) -> None:
         """Extension log."""
-        if not (level := self.deque.pop()):  # noqa WPS332
-            return
+        try:
+            if not (level := self.deque.pop()):  # noqa
+                return
 
-        frame = frame or inspect.currentframe().f_back  # type: ignore
-        file_name = kwargs.get("file_name", frame.f_code.co_filename)[-30:]  # type: ignore
-        line = kwargs.get("line", frame.f_lineno)  # type: ignore
-        title = kwargs.get("title", "---")
+            level_key = f"LOG_LEVEL_{level.upper()}_TPL"
+            level_style = self.config.get(level_key, "").strip('"')
+            if not level_style:
+                return
 
-        level_key = f"LOG_LEVEL_{level.upper()}_TPL"
-        level_style = self.config.get(level_key, "")
-        if level_style:
+            frame = frame or inspect.currentframe().f_back
+            len_file_name_section = 30
+            file_name = kwargs.get("file_name", frame.f_code.co_filename)[-len_file_name_section:]
+            line = kwargs.get("line", frame.f_lineno)
+            divider = int(self.config.get("COLUMNS")) - len_file_name_section - 20
+            title = kwargs.get("title", "-" * divider)
+
             if isinstance(msg, (str, int, float, bool, type(decimal), type(None))):
                 self.print_tbl(
-                    message=msg, file=file_name, line=line, level=level, level_style=level_style
+                    message=msg,
+                    file=file_name,
+                    line=line,
+                    level=level,
+                    level_style=level_style,
                 )
             elif isinstance(msg, (dict, tuple, list)):
                 # TODO add message for dict, tuple etc.
                 self.print_tbl(
-                    message=title, file=file_name, line=line, level=level, level_style=level_style
+                    message=title,
+                    file=file_name,
+                    line=line,
+                    level=level,
+                    level_style=level_style,
                 )
                 self.format_extra_obj(message=msg)
             else:
@@ -134,6 +153,8 @@ class Log:
                     level=level,
                     level_style=level_style,
                 )
+        except Exception as err:
+            log.warning(err)
 
     def print_tbl(
         self,
@@ -227,12 +248,19 @@ class Log:
         console_dict.print(table, markup=True)
 
 
+class HashableDict(dict):  # noqa WPS600
+    """Add hash object."""
+
+    def __hash__(self):
+        return id(self)
+
+
 log = Log(
-    config=config,
     dev_style="blue",
     run_style="cyan",
     end_style="cyan",
     start_style="cyan",
     trace_style="turquoise2",
     debug_style="dark_orange3",
+    config=HashableDict(config),
 )

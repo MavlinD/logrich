@@ -59,7 +59,7 @@ def test_one():
     log.success("SUCCESS [#FF1493]SUCCESS[/] [#00FFFF]SUCCESS[/] " * 10)
     log.debug("=" * 70)
 
-    title = "Это Спарта!"
+    title = "Это Спарта!!"
     console.rule(f"[green]{title}[/]", style=Style(color="magenta"))
 
     num_dict = {1: {2: {2: 111}, 3: {3: 111}}, 2: {3: {3: 111}}, 3: {2: {2: 111}, 3: {3: 111}}}
@@ -71,7 +71,7 @@ def test_one():
     }
     log.debug(num_dict, title="неверно раскрашивает первые двойки")
 
-    context = {"clientip": "192.168.0.1", "user": "fbloggs"}
+    context = {"clientip": "192.168.0.1", "user": "fbloggs1"}
 
     # logger.info("Protocol problem", extra=context)  # Standard logging
     # logger.bind(**context).info("Protocol problem")  # Loguru
@@ -90,4 +90,5 @@ def test_too():
     log.test("Тестовый лог")
     log.start("Тестовый лог")
     log.pprint("Тестовый лог")
-    # log.log(TEST, "test-2")
+    log.debug()
+    # log.trace(1)
