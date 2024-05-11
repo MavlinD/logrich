@@ -2,9 +2,10 @@ import decimal
 import inspect
 import re
 from collections import deque
-from collections.abc import Callable, Sequence
+from collections.abc import Callable
 from datetime import datetime
 from functools import lru_cache
+from types import FrameType
 from typing import Any
 
 from rich.console import Console
@@ -12,6 +13,7 @@ from rich.highlighter import ReprHighlighter
 from rich.pretty import pprint  # noqa
 from rich.table import Table
 from rich.theme import Theme
+from typing_extensions import reveal_type  # noqa
 
 from logrich.config import config
 
@@ -106,16 +108,18 @@ class Log:
     def print(
         self,
         # вызов логгера без параметров выведет текущую дату
-        *msg: Sequence,
-        frame=None,
+        *args,
+        frame: FrameType | None = None,
         **kwargs,
     ) -> None:
         """Extension log."""
         try:
-            if msg and len(msg) == 1:
-                msg = msg[0]
-            elif not msg:
-                msg = msg or datetime.now().strftime("%H:%M:%S")
+            if args and len(args) == 1:
+                msg = args[0]
+            elif not args:
+                msg = datetime.now().strftime("%H:%M:%S")
+            else:
+                msg = args
 
             if not (level := self.deque.pop()):  # noqa
                 return
@@ -124,18 +128,17 @@ class Log:
             level_style = self.config.get(level_key, "").strip('"')
             if not level_style:
                 return
+            frame = frame or inspect.currentframe().f_back  # type: ignore
 
-            frame = frame or inspect.currentframe().f_back
             len_file_name_section = 30
-            file_name = kwargs.get("file_name", frame.f_code.co_filename)[-len_file_name_section:]
-            line = kwargs.get("line", frame.f_lineno)
-            divider = int(self.config.get("COLUMNS")) - len_file_name_section - 20
+            file_name = kwargs.get("file_name", frame.f_code.co_filename)[-len_file_name_section:]  # type: ignore
+            line = kwargs.get("line", frame.f_lineno)  # type: ignore
+            divider = int(self.config.get("COLUMNS")) - len_file_name_section - 20  # type: ignore
             title = kwargs.get("title", "-" * divider)
 
             if isinstance(msg, str | int | float | bool | type(decimal) | type(None)):
-                # if isinstance(msg, (str, int, float, bool, type(decimal), type(None))):
                 self.print_tbl(
-                    message=msg,
+                    message=str(msg),
                     file=file_name,
                     line=line,
                     level=level,
@@ -155,7 +158,7 @@ class Log:
                 self.print_tbl(
                     message=msg,
                     file=file_name,
-                    line=frame.f_lineno,
+                    line=frame.f_lineno,  # type: ignore
                     level=level,
                     level_style=level_style,
                 )
