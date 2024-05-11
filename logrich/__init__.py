@@ -1,1 +1,1 @@
-from .app import log
+from .app import log  # noqa F401

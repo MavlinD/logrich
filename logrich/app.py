@@ -2,9 +2,10 @@ import decimal
 import inspect
 import re
 from collections import deque
+from collections.abc import Callable, Sequence
 from datetime import datetime
 from functools import lru_cache
-from typing import Any, Deque
+from typing import Any
 
 from rich.console import Console
 from rich.highlighter import ReprHighlighter
@@ -13,7 +14,6 @@ from rich.table import Table
 from rich.theme import Theme
 
 from logrich.config import config
-
 
 console = Console()
 
@@ -97,8 +97,8 @@ console_dict = Console(
 class Log:
     """Extension log, use in tests."""
 
-    def __init__(self, config: dict, **kwargs):
-        self.deque: Deque = deque()
+    def __init__(self, config: dict, **kwargs) -> None:
+        self.deque: deque = deque()
         self.config = config
         for k, v in kwargs.items():
             self.__setattr__(k, v)
@@ -106,12 +106,17 @@ class Log:
     def print(
         self,
         # вызов логгера без параметров выведет текущую дату
-        msg: str | datetime = datetime.now().strftime("%H:%M:%S"),
+        *msg: Sequence,
         frame=None,
         **kwargs,
     ) -> None:
         """Extension log."""
         try:
+            if msg and len(msg) == 1:
+                msg = msg[0]
+            elif not msg:
+                msg = msg or datetime.now().strftime("%H:%M:%S")
+
             if not (level := self.deque.pop()):  # noqa
                 return
 
@@ -127,7 +132,8 @@ class Log:
             divider = int(self.config.get("COLUMNS")) - len_file_name_section - 20
             title = kwargs.get("title", "-" * divider)
 
-            if isinstance(msg, (str, int, float, bool, type(decimal), type(None))):
+            if isinstance(msg, str | int | float | bool | type(decimal) | type(None)):
+                # if isinstance(msg, (str, int, float, bool, type(decimal), type(None))):
                 self.print_tbl(
                     message=msg,
                     file=file_name,
@@ -135,7 +141,7 @@ class Log:
                     level=level,
                     level_style=level_style,
                 )
-            elif isinstance(msg, (dict, tuple, list)):
+            elif isinstance(msg, (dict | tuple | list)):
                 # TODO add message for dict, tuple etc.
                 self.print_tbl(
                     message=title,
@@ -202,7 +208,7 @@ class Log:
             console_dict.print(table, markup=True)
         return capture.get()  # noqa WPS441
 
-    def __getattr__(self, *args, **kwargs):
+    def __getattr__(self, *args, **kwargs) -> Callable:
         """
         метод __getattr__ определяет поведение,
         когда наш атрибут, который мы пытаемся получить, не найден

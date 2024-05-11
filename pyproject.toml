@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "logrich"
-version = "1.0.4"
+version = "1.0.5"
 description = "loguru + rich = logrich"
 authors = ["Dmitry Mavlin <mavlind@list.ru>"]
 license = "GPL"
@@ -17,14 +17,13 @@ toml = "0.10.2"
 rich = "^12.4.4"
 importlib-metadata = "^5.2.0"
 python-dotenv = "^1.0.0"
+ruff = "^0.4.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.4"
 pytest-picked = "0.4.6"
 pytest-testmon = "1.1.1"
 pytest-watch = "4.2.0"
-black = "^22.1.0"
-pylint = "^2.12.2"
 mypy = "^0.961"
 pre-commit = "^2.19.0"
 watchdog = "^2.3.1"
@@ -32,12 +31,6 @@ watchdog = "^2.3.1"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.black]
-line-length = 100
-include = '\.pyi?$'
-quiet = true
-fast = true
 
 [tool.mypy]
 strict = false

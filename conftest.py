@@ -1,12 +1,11 @@
-from typing import Generator
+import logging
+from collections.abc import Generator
 
+import pytest
 from _pytest import nodes
 from _pytest.config import Config
 from _pytest.config.argparsing import Parser
 
-
-import pytest
-import logging
 from logrich.app import console
 
 

@@ -41,8 +41,17 @@ BIRDS = {
     "dodo": Bird("dodo", eats=["fruit"], fly=False, extinct=True),
 }
 
+temp_reason = "\033[38;5;196mВременно отключен, должен быть включен."
 
-# @pytest.mark.skip
+skip = False
+# skip = True
+skip_item = False
+# skip_item = True
+skipmark = pytest.mark.skipif(skip, reason=temp_reason)
+skipmark_item = pytest.mark.skipif(skip_item, reason=temp_reason)
+
+
+@skipmark
 def test_one():
     log.trace("Сообщение уровня TRACE: 5")
     log.debug("Сообщение уровня DEBUG: 10")
@@ -50,9 +59,7 @@ def test_one():
     log.success("Сообщение уровня SUCCESS: 25")
     log.warning("Сообщение уровня WARNING: 30")
     log.error("Сообщение уровня ERROR: 40; " * 10)
-    log.fatal(
-        "Это катастрофа, парень шел к успеху, но не фартануло..:-(\nСообщение уровня CRITICAL: 50"
-    )
+    log.fatal("Это катастрофа, парень шел к успеху, но не фартануло..:-(\nСообщение уровня CRITICAL: 50")
     log.debug(BIRDS, title="Объект птички")
     log.info(obj, title="Словарь")
     # return
@@ -62,7 +69,11 @@ def test_one():
     title = "Это Спарта!!"
     console.rule(f"[green]{title}[/]", style=Style(color="magenta"))
 
-    num_dict = {1: {2: {2: 111}, 3: {3: 111}}, 2: {3: {3: 111}}, 3: {2: {2: 111}, 3: {3: 111}}}
+    num_dict = {
+        1: {2: {2: 111}, 3: {3: 111}},
+        2: {3: {3: 111}},
+        3: {2: {2: 111}, 3: {3: 111}},
+    }
     log.debug(num_dict, title="неверно раскрашивает первые числа")
     num_dict = {
         1: {2: {2: "здесь будут стили"}, 3: {3: "здесь будут стили"}},
@@ -71,7 +82,7 @@ def test_one():
     }
     log.debug(num_dict, title="неверно раскрашивает первые двойки")
 
-    context = {"clientip": "192.168.0.1", "user": "fbloggs1"}
+    context = {"clientip": "192.168.0.1", "user": "fbloggs1"}  # noqa F841
 
     # logger.info("Protocol problem", extra=context)  # Standard logging
     # logger.bind(**context).info("Protocol problem")  # Loguru
@@ -90,5 +101,9 @@ def test_too():
     log.test("Тестовый лог")
     log.start("Тестовый лог")
     log.pprint("Тестовый лог")
-    log.debug()
-    # log.trace(1)
+    log.debug((1, 2))
+    log.debug(3, 4)
+    log.trace()
+    log.success("foo", "bar")
+    log.success("foo", "bar", title="Заголовок сообщения")
+    log.info("foo bar", title="Заголовок сообщения")
