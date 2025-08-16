@@ -138,3 +138,7 @@ notebooks
 *.zip
 .testmodata
 .pypirc
+src/.zed
+.vscode/
+.zed/
+

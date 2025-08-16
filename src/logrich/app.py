@@ -1,5 +1,6 @@
 import decimal
 import inspect
+import logging
 import re
 from collections import deque
 from collections.abc import Callable
@@ -9,97 +10,20 @@ from types import FrameType
 from typing import Any
 
 from rich.console import Console
-from rich.highlighter import ReprHighlighter
-from rich.pretty import pprint  # noqa
 from rich.table import Table
-from rich.theme import Theme
-from typing_extensions import reveal_type  # noqa
 
-from logrich.config import config
-
-console = Console()
-
-
-def combine_regex(*regexes: str) -> str:
-    """Combine a number of regexes in to a single regex.
-
-    Returns:
-        str: New regex with all regexes ORed together.
-    """
-    return "|".join(regexes)
-
-
-class MyReprHighlighter(ReprHighlighter):
-    """подсветка вывода на основе регул. выражений"""
-
-    # https://regex101.com/r/zR2hP5/1
-    base_style = "repr."
-    highlights = [
-        r"'(?P<str>[\S\s]*)'",
-        r":\s\'(?P<value>.+)\'",
-        r"['](?P<string_list_tuple>\w+)[']",
-        r"(?P<digit2>\d*)[\"\s,[,(](?P<digit>\d*\.?\s?-?\d*-?\.?\d+)",
-        combine_regex(
-            r"(?P<brace>[][{}()])",  # noqa
-            r"\'(?P<key>[\w-]+)\'(?P<colon>:)",
-            r"(?P<comma>,)\s",
-        ),
-        r"(?P<quotes>\')",
-        r"(?P<equal>=)",  # noqa
-        r"(?P<class_name>[A-Z].*)\(",
-        r'(?P<attrib_name>[\w_]{1,50})=(?P<attrib_value>"?[\w_]+"?)?',
-        r"\b(?P<bool_true>True)\b|\b(?P<bool_false>False)\b|\b(?P<none>None)\b",
-    ]
-
-
-color_of_digit = "bold magenta"
-
-theme = Theme(
-    # https://www.w3schools.com/colors/colors_picker.asp
-    # https://htmlcolorcodes.com/color-names/
-    # https://colorscheme.ru/
-    {
-        "repr.brace": "bold black",
-        "repr.str": "green",
-        "repr.attrib_name": "#0099ff",
-        "repr.equal": "red dim",
-        "repr.digit": color_of_digit,
-        "repr.digit2": color_of_digit,
-        "repr.colon": "#D2691E",
-        "repr.quotes": "#778899",
-        "repr.comma": "#778899",
-        "repr.key": "#08e8de",
-        "repr.bool_true": "bold blue",
-        "repr.none": "blue",
-        "repr.bool_false": "yellow",
-        "repr.class_name": "magenta bold",
-        "repr.string_list_tuple": "green",
-        "trace_msg": "#05a7f7",
-        "debug_msg": "#e64d00",
-        "info_msg": "#33ccff",
-        "success_msg": "green",
-        "warning_msg": "yellow",
-        "error_msg": "#ff5050",
-        "critical_msg": "#de0b2e",
-    },
-)
-
-# инстанс консоли rich
-console_dict = Console(
-    highlighter=MyReprHighlighter(),
-    theme=theme,
-    markup=True,
-    log_time=False,
-    log_path=False,
-    safe_box=True,
-)
+from logrich.config import config_main, console, console_dict, get_main_config, get_style
 
 
 @lru_cache
 class Log:
     """Extension log, use in tests."""
 
-    def __init__(self, config: dict, **kwargs) -> None:
+    def __init__(
+        self,
+        config: config_main,
+        **kwargs,
+    ) -> None:
         self.deque: deque = deque()
         self.config = config
         for k, v in kwargs.items():
@@ -113,6 +37,10 @@ class Log:
         **kwargs,
     ) -> None:
         """Extension log."""
+
+        if not self.config.LGR_LOGRICH_ON:
+            return
+
         try:
             if args and len(args) == 1:
                 msg = args[0]
@@ -121,19 +49,31 @@ class Log:
             else:
                 msg = args
 
-            if not (level := self.deque.pop()):  # noqa
+            if not (level := self.deque.pop()):
                 return
 
             level_key = f"LOG_LEVEL_{level.upper()}_TPL"
-            level_style = self.config.get(level_key, "").strip('"')
+            level_style = get_style(level_key)
+
+            # если стиль определяется как пустая строка, то вывода не будет
             if not level_style:
                 return
-            frame = frame or inspect.currentframe().f_back  # type: ignore
 
-            len_file_name_section = 30
-            file_name = kwargs.get("file_name", frame.f_code.co_filename)[-len_file_name_section:]  # type: ignore
-            line = kwargs.get("line", frame.f_lineno)  # type: ignore
-            divider = int(self.config.get("COLUMNS")) - len_file_name_section - 20  # type: ignore
+            # фрейм с исходными данными для вывода, иногда,
+            # может быть передан на вход
+            frame = frame or inspect.currentframe()
+
+            if isinstance(frame, FrameType):
+                frame = frame.f_back
+
+            if not frame:
+                logging.warning("Frame undefined")
+                return
+
+            len_file_name_section = self.config.LGR_LEN_FILE_NAME_SECTION
+            file_name = kwargs.get("file_name", frame.f_code.co_filename)[-len_file_name_section:]
+            line = kwargs.get("line", frame.f_lineno)
+            divider = self.config.LGR_CONSOLE_WITH - len_file_name_section - self.config.LGR_REDUCE_DEVIDER_LEN
             title = kwargs.get("title", "-" * divider)
 
             if isinstance(msg, str | int | float | bool | type(decimal) | type(None)):
@@ -158,12 +98,12 @@ class Log:
                 self.print_tbl(
                     message=msg,
                     file=file_name,
-                    line=frame.f_lineno,  # type: ignore
+                    line=frame.f_lineno,
                     level=level,
                     level_style=level_style,
                 )
         except Exception as err:
-            log.warning(err)
+            logging.warning(err)
 
     def print_tbl(
         self,
@@ -187,19 +127,20 @@ class Log:
         # LEVEL
         table.add_column(
             justify="left",
-            min_width=9,
-            max_width=15,
+            min_width=self.config.LGR_LEVEL_MIN_WITH,
+            max_width=self.config.LGR_LEVEL_MAX_WITH,
         )
         try:
             style = getattr(self, f"{level}_style")
         except AttributeError:
-            style = re.match(r"^\[(.*)].", level_style).group(1)  # type: ignore
+            style = re.match(r"^\[(.*)].", level_style)
+            style = style and style.group(1)
             if style:
-                style = style.replace("reverse", "")  # type: ignore
+                style = style.replace("reverse", "")
         # MESSAGE
-        table.add_column(ratio=100, overflow="fold", style=style)
+        table.add_column(ratio=self.config.LGR_RATIO_MESSAGE, overflow="fold", style=style)
         # FILE
-        table.add_column(justify="right", ratio=50, overflow="fold")
+        table.add_column(justify="right", ratio=self.config.LGR_RATIO_FILE_NAME, overflow="fold")
         # LINE
         table.add_column(ratio=2, overflow="crop")  # для паддинга справа
         msg = f"{message}"
@@ -209,7 +150,7 @@ class Log:
 
         with console.capture() as capture:
             console_dict.print(table, markup=True)
-        return capture.get()  # noqa WPS441
+        return capture.get()
 
     def __getattr__(self, *args, **kwargs) -> Callable:
         """
@@ -218,12 +159,11 @@ class Log:
         """
         name = args[0]
         if name.endswith(("style",)):
-            return object.__getattribute__(self, name)  # noqa WPS609
+            return object.__getattribute__(self, name)
         self.deque.append(name)
         return self.print
 
-    @staticmethod
-    def print_message_for_table(message: Any) -> str:
+    def print_message_for_table(self, message: Any) -> str:
         # инстанс консоли rich
         console_ = Console(
             no_color=True,
@@ -236,9 +176,9 @@ class Log:
             console_.print(
                 message,
                 markup=False,
-                width=80,
+                width=self.config.LGR_CONSOLE_WITH,
             )
-        return capture.get()  # noqa WPS441
+        return capture.get()
 
     def format_extra_obj(self, message: Any) -> None:
         """форматирует вывод исключений в цвете и в заданной ширине, исп-ся rich"""
@@ -257,19 +197,4 @@ class Log:
         console_dict.print(table, markup=True)
 
 
-class HashableDict(dict):  # noqa WPS600
-    """Add hash object."""
-
-    def __hash__(self):
-        return id(self)
-
-
-log = Log(
-    dev_style="blue",
-    run_style="cyan",
-    end_style="cyan",
-    start_style="cyan",
-    trace_style="turquoise2",
-    debug_style="dark_orange3",
-    config=HashableDict(config),
-)
+log = Log(config=get_main_config())

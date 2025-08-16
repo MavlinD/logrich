@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from rich.style import Style
 
@@ -17,7 +19,7 @@ obj = {
     "score": 123456,
     "elapsed_time": "0.060 seconds",
     "version": "2.14.3",
-    "access": "eyJ0eXAiiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjUzNTUwMTY1LCJqdGkiOiJmNzFhYjg5OWE5MDY0Y2EwODgwMzY1NzQ1NjYwNzdjOSIsInVzZXJfaWQiOjF9.KES3fhmBTXy8AwDSJTseNsLFC3xSh1J_slndgmSwp08",
+    "access": "eyJ0XAiiJKV1QiLCJhbGciOiJIUzI1NiJ912.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjUzNTUwMTY1LCJqdGkiOiJmNzFhYjg5OWE5MDY0Y2EwODgwMzY1NzQ1NjYwNzdjOSIsInVzZXJfaWQiOjF9.KES3fhmBTXy8AwDSJTseNsLFC3xSh1J_slndgmSwp08",
     "id": 1234561,
 }
 
@@ -100,10 +102,13 @@ def test_too():
     # log.tst = lambda msg: log.log(TST, msg)
     log.test("Тестовый лог")
     log.start("Тестовый лог")
-    log.pprint("Тестовый лог")
+    log.pprint("Тестовый лог PPRINT")
     log.debug((1, 2))
+    log.trace(os.get_terminal_size())
+    # assert None, "--"
     log.debug(3, 4)
     log.trace()
     log.success("foo", "bar")
+    log.trace(*["baz2", "bar"])
     log.success("foo", "bar", title="Заголовок сообщения")
     log.info("foo bar", title="Заголовок сообщения")

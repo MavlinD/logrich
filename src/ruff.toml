@@ -1,0 +1,16 @@
+target-version = "py311"
+
+line-length = 119
+
+[lint]
+extend-select = [
+    "UP", # pyupgrade
+    "B",
+    "I",
+]
+
+ignore = []
+
+# Disable fix for unused imports (`F401`).
+# отменяет удаление неиспользуемых импортов
+unfixable = ["F401"]
